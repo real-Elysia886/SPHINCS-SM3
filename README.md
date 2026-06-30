@@ -52,3 +52,33 @@ make clean
 make test/spx PARAMS=sphincs-sm3-224f THASH=robust
 ./test/spx
 ```
+
+## Shorter experimental set: sphincs-sm3-224f-short
+
+For a more aggressive size/speed tradeoff, `sphincs-sm3-224f-short` keeps
+`n = 28` but changes:
+
+```text
+h = 64
+d = 16
+a = 8
+k = 33
+w = 256
+```
+
+This keeps height-4 subtrees and about `2^64` leaf capacity, uses the 192f FORS
+shape, and reduces WOTS length from 59 to 30.  The signature length is:
+
+```text
+sig_bytes = 23576
+```
+
+This is 26280 bytes shorter than `sphincs-sha2-256f`, or about 52.71%.  The
+tradeoff is speed: `w = 256` makes WOTS chains much longer than `w = 16`.
+
+```sh
+cd ref
+make clean
+make test/spx PARAMS=sphincs-sm3-224f-short THASH=robust
+./test/spx
+```
