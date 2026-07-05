@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+results/
+*.docx
+*.pdf
+*.pptx
+*.xlsx
+*.zip

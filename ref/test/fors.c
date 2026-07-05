@@ -10,7 +10,7 @@
 int main(void)
 {
     /* Make stdout buffer more responsive. */
-    setbuf(stdout, NULL);
+    setvbuf(stdout, NULL, _IONBF, 0);
 
     spx_ctx ctx;
 

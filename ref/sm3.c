@@ -2,7 +2,6 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "utils.h"
 #include "sm3.h"
 
 static uint32_t load_be32(const uint8_t *x)
@@ -28,6 +27,11 @@ static void store_be32(uint8_t *x, uint32_t u)
     x[1] = (uint8_t)(u >> 16);
     x[2] = (uint8_t)(u >> 8);
     x[3] = (uint8_t)u;
+}
+
+static void store_counter32(uint8_t *x, uint32_t u)
+{
+    store_be32(x, u);
 }
 
 static void store_be64(uint8_t *x, uint64_t u)
@@ -200,20 +204,20 @@ void sm3(uint8_t *out, const uint8_t *in, size_t inlen)
 void mgf1_sm3(unsigned char *out, unsigned long outlen,
               const unsigned char *in, unsigned long inlen)
 {
-    SPX_VLA(uint8_t, inbuf, inlen + 4);
+    uint8_t inbuf[inlen + 4];
     unsigned char outbuf[SPX_SM3_OUTPUT_BYTES];
     unsigned long i;
 
     memcpy(inbuf, in, inlen);
 
     for (i = 0; (i + 1) * SPX_SM3_OUTPUT_BYTES <= outlen; i++) {
-        u32_to_bytes(inbuf + inlen, (uint32_t)i);
+        store_counter32(inbuf + inlen, (uint32_t)i);
         sm3(out, inbuf, inlen + 4);
         out += SPX_SM3_OUTPUT_BYTES;
     }
 
     if (outlen > i * SPX_SM3_OUTPUT_BYTES) {
-        u32_to_bytes(inbuf + inlen, (uint32_t)i);
+        store_counter32(inbuf + inlen, (uint32_t)i);
         sm3(outbuf, inbuf, inlen + 4);
         memcpy(out, outbuf, outlen - i * SPX_SM3_OUTPUT_BYTES);
     }

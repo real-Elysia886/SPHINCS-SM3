@@ -1,7 +1,7 @@
 PARAMS = sphincs-haraka-128f
 THASH = robust
 
-CC=/usr/bin/gcc
+CC ?= cc
 CFLAGS=-Wall -Wextra -Wpedantic -O3 -std=c99 -Wconversion -Wmissing-prototypes -DPARAMS=$(PARAMS) $(EXTRA_CFLAGS)
 
 SOURCES =          address.c randombytes.c merkle.c wots.c wotsx1.c utils.c utilsx1.c fors.c sign.c
@@ -58,12 +58,20 @@ test/%: test/%.c $(SOURCES) $(HEADERS)
 test/haraka: test/haraka.c $(filter-out haraka.c,$(SOURCES)) $(HEADERS)
 	$(CC) $(CFLAGS) -o $@ $(filter-out haraka.c,$(SOURCES)) $< $(LDLIBS)
 
+test/sm3_kat: test/sm3_kat.c sm3.c sm3.h params.h context.h
+	$(CC) $(CFLAGS) -o $@ sm3.c $< $(LDLIBS)
+
 test/%.exec: test/%
 	@$<
 
 clean:
 	-$(RM) $(TESTS)
+	-$(RM) $(TESTS:=.exe)
+	-$(RM) test/sm3_kat
+	-$(RM) test/sm3_kat.exe
 	-$(RM) $(BENCHMARK)
+	-$(RM) $(BENCHMARK).exe
 	-$(RM) PQCgenKAT_sign
+	-$(RM) PQCgenKAT_sign.exe
 	-$(RM) PQCsignKAT_*.rsp
 	-$(RM) PQCsignKAT_*.req

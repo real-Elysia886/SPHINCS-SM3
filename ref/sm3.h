@@ -2,6 +2,7 @@
 #define SPX_SM3_H
 
 #include "params.h"
+#include "context.h"
 
 #include <stddef.h>
 #include <stdint.h>

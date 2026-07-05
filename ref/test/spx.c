@@ -6,8 +6,13 @@
 #include "../params.h"
 #include "../randombytes.h"
 
+#ifndef SPX_MLEN
 #define SPX_MLEN 32
+#endif
+
+#ifndef SPX_SIGNATURES
 #define SPX_SIGNATURES 1
+#endif
 
 int main(void)
 {
@@ -15,7 +20,7 @@ int main(void)
     int i;
 
     /* Make stdout buffer more responsive. */
-    setbuf(stdout, NULL);
+    setvbuf(stdout, NULL, _IONBF, 0);
 
     unsigned char pk[SPX_PK_BYTES];
     unsigned char sk[SPX_SK_BYTES];
@@ -24,6 +29,14 @@ int main(void)
     unsigned char *mout = malloc(SPX_BYTES + SPX_MLEN);
     unsigned long long smlen;
     unsigned long long mlen;
+
+    if (m == NULL || sm == NULL || mout == NULL) {
+        printf("allocation failed!\n");
+        free(m);
+        free(sm);
+        free(mout);
+        return -1;
+    }
 
     randombytes(m, SPX_MLEN);
 

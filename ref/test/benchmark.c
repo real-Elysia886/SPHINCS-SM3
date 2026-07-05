@@ -109,7 +109,7 @@ static void display_result(double result, unsigned long long *l, size_t llen, un
 int main(void)
 {
     /* Make stdout buffer more responsive. */
-    setbuf(stdout, NULL);
+    setvbuf(stdout, NULL, _IONBF, 0);
     init_cpucycles();
 
     spx_ctx ctx;

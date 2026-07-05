@@ -2,15 +2,33 @@
 This code was taken from the SPHINCS reference implementation and is public domain.
 */
 
-#include <fcntl.h>
-#include <unistd.h>
-
 #include "randombytes.h"
 
+#ifdef _WIN32
+#include <windows.h>
+#include <bcrypt.h>
+#pragma comment(lib, "bcrypt")
+#else
+#include <fcntl.h>
+#include <unistd.h>
+#endif
+
+#ifndef _WIN32
 static int fd = -1;
+#endif
 
 void randombytes(unsigned char *x, unsigned long long xlen)
 {
+#ifdef _WIN32
+    while (xlen > 0) {
+        ULONG chunk = xlen > 1048576 ? 1048576 : (ULONG)xlen;
+        if (BCryptGenRandom(NULL, x, chunk, BCRYPT_USE_SYSTEM_PREFERRED_RNG) != 0) {
+            continue;
+        }
+        x += chunk;
+        xlen -= chunk;
+    }
+#else
     unsigned long long i;
 
     if (fd == -1) {
@@ -40,4 +58,5 @@ void randombytes(unsigned char *x, unsigned long long xlen)
         x += i;
         xlen -= i;
     }
+#endif
 }
