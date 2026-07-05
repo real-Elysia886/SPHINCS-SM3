@@ -1,8 +1,8 @@
-<h1 align="center">
-  <br>
-  SPHINCS+-SM3
-  <br>
-</h1>
+<p align="center">
+  <img src="assets/showcase/logo.png" width="128" alt="SPHINCS+-SM3 project logo">
+</p>
+
+<h1 align="center">SPHINCS+-SM3</h1>
 
 <p align="center">
   <strong>Truncated-hash signature size optimization for the SM3 instantiation of SPHINCS+.</strong>
@@ -20,6 +20,24 @@
   <img src="https://img.shields.io/badge/tests-KAT%20%2B%20sign%2Fverify-brightgreen" alt="Tests">
   <img src="https://img.shields.io/badge/status-experimental-orange" alt="Experimental">
 </p>
+
+<p align="center">
+  <a href="#results">Results</a> ·
+  <a href="#quick-start">Quick Start</a> ·
+  <a href="#architecture">Architecture</a> ·
+  <a href="#security-notes">Security Notes</a>
+</p>
+
+![SPHINCS+-SM3 hero](assets/showcase/hero.png)
+
+<table>
+  <tr>
+    <td align="center"><strong>20.14%</strong><br>maximum implemented signature-size reduction</td>
+    <td align="center"><strong>39,816 B</strong><br><code>sphincs-sm3-224f</code> signature size</td>
+    <td align="center"><strong>44,548 B</strong><br><code>sphincs-sm3-224f-dn</code> conservative size</td>
+    <td align="center"><strong>SM3 KAT + sign/verify</strong><br>reproducible test path</td>
+  </tr>
+</table>
 
 ## Why This Project
 
@@ -48,6 +66,12 @@ The repository is organized as a competition-friendly, reproducible experiment:
 | Windows-friendly runner | `tools/clang_smoke_test.py` for environments without GNU Make |
 
 ## Results
+
+<p align="center">
+  <img src="assets/showcase/results-concept.png" alt="Conceptual signature-size comparison" width="820">
+</p>
+
+The visual above is illustrative. The reproducible numeric results are listed below and checked by `tools/check_consistency.py`.
 
 | Scheme | n | h | d | h/d | WOTS len | d*n | Tree bits | Signature bytes | Saved vs 256f | Status |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
@@ -86,10 +110,7 @@ params-sphincs-sm3-224f-dn.h: ok (sig=44548, tree_bits=57)
 python tools/clang_smoke_test.py
 ```
 
-This builds and runs:
-
-- SM3 known-answer tests.
-- Key generation, signing, verification, in-place verification, and tamper rejection for both SM3 parameter sets.
+This builds and runs SM3 known-answer tests, key generation, signing, verification, in-place verification, and tamper rejection for both SM3 parameter sets.
 
 ### GNU Make workflow
 

@@ -1,8 +1,8 @@
-<h1 align="center">
-  <br>
-  SPHINCS+-SM3
-  <br>
-</h1>
+<p align="center">
+  <img src="assets/showcase/logo.png" width="128" alt="SPHINCS+-SM3 项目标志">
+</p>
+
+<h1 align="center">SPHINCS+-SM3</h1>
 
 <p align="center">
   <strong>面向 SPHINCS+-SM3 的截断哈希签名长度优化实验。</strong>
@@ -21,6 +21,24 @@
   <img src="https://img.shields.io/badge/status-experimental-orange" alt="Experimental">
 </p>
 
+<p align="center">
+  <a href="#实验结果">实验结果</a> ·
+  <a href="#快速开始">快速开始</a> ·
+  <a href="#项目结构">项目结构</a> ·
+  <a href="#安全性说明">安全性说明</a>
+</p>
+
+![SPHINCS+-SM3 展示图](assets/showcase/hero.png)
+
+<table>
+  <tr>
+    <td align="center"><strong>20.14%</strong><br>已实现方案最大签名长度降幅</td>
+    <td align="center"><strong>39,816 B</strong><br><code>sphincs-sm3-224f</code> 签名长度</td>
+    <td align="center"><strong>44,548 B</strong><br><code>sphincs-sm3-224f-dn</code> 保守工程方案</td>
+    <td align="center"><strong>SM3 KAT + 签验测试</strong><br>可复现实验链路</td>
+  </tr>
+</table>
+
 ## 为什么做这个项目
 
 SPHINCS+ 是无状态的基于哈希后量子签名方案。以国密 SM3 实例化 SPHINCS+ 有利于国产密码算法生态适配，但快速高安全级别参数的签名长度较大，限制了其在带宽敏感场景中的部署。
@@ -33,7 +51,7 @@ SPHINCS+ 是无状态的基于哈希后量子签名方案。以国密 SM3 实例
 - 给出两组 224 位实验参数；
 - 提供参数长度和地址约束分析脚本；
 - 提供 SM3 标准向量测试；
-- 提供两组参数的签名/验签 smoke test。
+- 提供两组参数的签名、验签 smoke test。
 
 > 本项目定位为实验性参数优化与工程可行性验证，不是可直接标准化部署的新签名方案。
 
@@ -50,6 +68,12 @@ SPHINCS+ 是无状态的基于哈希后量子签名方案。以国密 SM3 实例
 | Windows 复现 | `tools/clang_smoke_test.py` 支持无 GNU Make 的 clang 环境 |
 
 ## 实验结果
+
+<p align="center">
+  <img src="assets/showcase/results-concept.png" alt="签名长度对比概念图" width="820">
+</p>
+
+上图为展示用概念图；下表中的数值由 `tools/check_consistency.py` 复算校验。
 
 | 方案 | n | h | d | h/d | WOTS len | d*n | tree bits | 签名长度 | 相对 256f 节省 | 状态 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
@@ -88,10 +112,7 @@ params-sphincs-sm3-224f-dn.h: ok (sig=44548, tree_bits=57)
 python tools/clang_smoke_test.py
 ```
 
-该脚本会编译并运行：
-
-- SM3 标准向量测试；
-- 两组 SM3 参数的密钥生成、签名、验签、原地验签和篡改失效测试。
+该脚本会编译并运行 SM3 标准向量测试，以及两组 SM3 参数的密钥生成、签名、验签、原地验签和篡改失效测试。
 
 ### GNU Make 流程
 
