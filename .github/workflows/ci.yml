@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  reproducibility:
+    name: Reproducibility checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang make
+
+      - name: Check parameter consistency
+        run: python tools/check_consistency.py
+
+      - name: Search and print parameter candidates
+        run: python tools/analyze_params.py --search
+
+      - name: Run clang smoke tests
+        run: python tools/clang_smoke_test.py --signatures 2 --message-bytes 64
+
+      - name: Run GNU Make SM3 known-answer tests
+        working-directory: ref
+        run: |
+          make clean
+          make test/sm3_kat PARAMS=sphincs-sm3-224f THASH=robust
+          ./test/sm3_kat
+
+          make clean
+          make test/sm3_kat PARAMS=sphincs-sm3-224f-dn THASH=robust
+          ./test/sm3_kat
+
+      - name: Run GNU Make sign/verify tests
+        working-directory: ref
+        run: |
+          make clean
+          make test/spx PARAMS=sphincs-sm3-224f THASH=robust \
+            EXTRA_CFLAGS="-DSPX_SIGNATURES=2 -DSPX_MLEN=64 -DSPX_TEST_INVALIDSIG"
+          ./test/spx
+
+          make clean
+          make test/spx PARAMS=sphincs-sm3-224f-dn THASH=robust \
+            EXTRA_CFLAGS="-DSPX_SIGNATURES=2 -DSPX_MLEN=64 -DSPX_TEST_INVALIDSIG"
+          ./test/spx

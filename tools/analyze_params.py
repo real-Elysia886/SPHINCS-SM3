@@ -81,7 +81,7 @@ CANDIDATES = [
     BASELINE,
     Params("sphincs-sm3-224f implemented", 28, 68, 17, 9, 35),
     Params("sphincs-sm3-224f-dn implemented", 28, 60, 20, 9, 35),
-    Params("report h=80,d=20 candidate", 28, 80, 20, 9, 35),
+    Params("h=80,d=20 candidate", 28, 80, 20, 9, 35),
 ]
 
 

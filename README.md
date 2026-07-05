@@ -17,6 +17,7 @@
   <img src="https://img.shields.io/badge/Post--Quantum-SPHINCS%2B-2E74B5" alt="Post-quantum SPHINCS+">
   <img src="https://img.shields.io/badge/Hash-SM3-c62828" alt="SM3">
   <img src="https://img.shields.io/badge/C-99-00599C?logo=c" alt="C99">
+  <img src="https://github.com/real-Elysia886/SPHINCS-SM3/actions/workflows/ci.yml/badge.svg" alt="CI">
   <img src="https://img.shields.io/badge/tests-KAT%20%2B%20sign%2Fverify-brightgreen" alt="Tests">
   <img src="https://img.shields.io/badge/status-experimental-orange" alt="Experimental">
 </p>
