@@ -135,7 +135,7 @@ The project should not claim:
 1. Give a formal SM3-oriented multi-target second-preimage analysis.
 2. Analyze the robust and simple tweakable-hash variants separately.
 3. Extend the address format and implement the `h=80,d=20` candidate.
-4. Add a parameter-search report that outputs Pareto-optimal candidates under address and security-proxy constraints.
+4. Extend the parameter-search report with platform-specific performance objectives.
 5. Ask for third-party review of the security assumptions before any deployment claim.
 
 ## References

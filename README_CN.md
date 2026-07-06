@@ -24,6 +24,7 @@
 
 <p align="center">
   <a href="#实验结果">实验结果</a> ·
+  <a href="docs/parameter-search.md">参数搜索</a> ·
   <a href="#性能测试">性能测试</a> ·
   <a href="#快速开始">快速开始</a> ·
   <a href="#项目结构">项目结构</a> ·
@@ -64,7 +65,7 @@ SPHINCS+ 是无状态的基于哈希后量子签名方案。以国密 SM3 实例
 | --- | --- |
 | SM3 后端 | `sm3.c`、`hash_sm3.c`、`thash_sm3_simple.c`、`thash_sm3_robust.c` |
 | 224 位截断 | SM3 仍完整计算 256 位摘要，SPHINCS+ 对象仅保留前 28 字节 |
-| 长度分析 | 可复现的签名长度公式、参数表和节省比例 |
+| 参数搜索 | 可复现的长度公式、地址约束检查和 Pareto 候选搜索 |
 | 地址约束检查 | 显式检查参考实现中 64 位 subtree address 限制 |
 | SM3 KAT | 覆盖空串、`abc`、`abcd` 重复 16 次三个标准向量 |
 | 签验测试 | keygen、sign、verify、原地验签和篡改失效测试 |
@@ -109,7 +110,7 @@ python tools/benchmark_params.py --iterations 5 --message-bytes 64
 
 ```bash
 python tools/check_consistency.py
-python tools/analyze_params.py --search
+python tools/analyze_params.py --search --pareto
 ```
 
 预期关键输出：

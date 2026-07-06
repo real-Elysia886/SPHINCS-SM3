@@ -24,6 +24,7 @@
 
 <p align="center">
   <a href="#results">Results</a> ·
+  <a href="docs/parameter-search.md">Parameter Search</a> ·
   <a href="#performance">Performance</a> ·
   <a href="#quick-start">Quick Start</a> ·
   <a href="#architecture">Architecture</a> ·
@@ -62,7 +63,7 @@ The repository is organized as a competition-friendly, reproducible experiment:
 | --- | --- |
 | SM3 backend | `sm3.c`, `hash_sm3.c`, `thash_sm3_simple.c`, and `thash_sm3_robust.c` |
 | 224-bit truncation | SM3 still computes 256-bit digests; SPHINCS+ objects keep the first 28 bytes |
-| Size analysis | Reproducible signature-size formulas and parameter comparisons |
+| Parameter search | Reproducible size formulas, address checks, and Pareto-style candidate search |
 | Address constraint check | Explicit handling of the 64-bit subtree-address limit in the reference code |
 | SM3 KAT | Known-answer tests for empty string, `abc`, and `abcd` repeated 16 times |
 | Smoke tests | keygen, sign, verify, in-place verify, and tamper rejection |
@@ -107,7 +108,7 @@ The latest local benchmark table is recorded in [docs/performance.md](docs/perfo
 
 ```bash
 python tools/check_consistency.py
-python tools/analyze_params.py --search
+python tools/analyze_params.py --search --pareto
 ```
 
 Expected highlights:

@@ -32,7 +32,7 @@ jobs:
         run: python tools/check_consistency.py
 
       - name: Search and print parameter candidates
-        run: python tools/analyze_params.py --search
+        run: python tools/analyze_params.py --search --pareto
 
       - name: Run clang smoke tests
         run: python tools/clang_smoke_test.py --signatures 2 --message-bytes 64
