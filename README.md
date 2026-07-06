@@ -24,6 +24,7 @@
 
 <p align="center">
   <a href="#results">Results</a> ·
+  <a href="#performance">Performance</a> ·
   <a href="#quick-start">Quick Start</a> ·
   <a href="#architecture">Architecture</a> ·
   <a href="#security-notes">Security Notes</a>
@@ -88,6 +89,16 @@ The reference implementation stores subtree indices in 64 bits:
 ```
 
 Therefore `h=80,d=20` is a useful design candidate, but it cannot be represented by the current address format.
+
+## Performance
+
+The repository includes a reproducible API-level benchmark for key generation, signing, and verification:
+
+```bash
+python tools/benchmark_params.py --iterations 5 --message-bytes 64
+```
+
+The latest local benchmark table is recorded in [docs/performance.md](docs/performance.md). Timings are environment-dependent; the table is intended for same-machine comparison of signature-size savings and runtime trends.
 
 ## Quick Start
 

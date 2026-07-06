@@ -24,6 +24,7 @@
 
 <p align="center">
   <a href="#实验结果">实验结果</a> ·
+  <a href="#性能测试">性能测试</a> ·
   <a href="#快速开始">快速开始</a> ·
   <a href="#项目结构">项目结构</a> ·
   <a href="#安全性说明">安全性说明</a>
@@ -90,6 +91,16 @@ SPHINCS+ 是无状态的基于哈希后量子签名方案。以国密 SM3 实例
 ```
 
 所以 `h=80,d=20` 虽然是有价值的理论候选，但当前地址格式无法直接表示。
+
+## 性能测试
+
+仓库提供了面向 API 的可复现性能测试脚本，覆盖密钥生成、签名和验签：
+
+```bash
+python tools/benchmark_params.py --iterations 5 --message-bytes 64
+```
+
+最新本地测试结果记录在 [docs/performance.md](docs/performance.md)。性能数据会受机器、编译器和运行环境影响，因此更适合同机比较签名长度收益和运行时间趋势。
 
 ## 快速开始
 
