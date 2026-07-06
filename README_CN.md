@@ -27,7 +27,8 @@
   <a href="#性能测试">性能测试</a> ·
   <a href="#快速开始">快速开始</a> ·
   <a href="#项目结构">项目结构</a> ·
-  <a href="#安全性说明">安全性说明</a>
+  <a href="#安全性说明">安全性说明</a> ·
+  <a href="docs/security-analysis.md">安全分析</a>
 </p>
 
 ![SPHINCS+-SM3 展示图](assets/showcase/hero.png)
@@ -185,6 +186,8 @@ SM3 实例化
 - 224 位选择参考了 Category Five SPHINCS+ with SHA-256 多目标攻击分析中的 `2^217.4` 水位。
 - SM3 场景仍需要独立的多目标第二原像形式化分析。
 - `sphincs-sm3-224f-dn` 保持 `d*n`，但为了满足当前 64 位 subtree address 约束选择 `h=60`。
+
+详细的假设边界、风险清单和竞赛答辩口径见 [docs/security-analysis.md](docs/security-analysis.md)。
 
 ## 参赛简介（300 字以内）
 

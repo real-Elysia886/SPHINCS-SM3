@@ -27,7 +27,8 @@
   <a href="#performance">Performance</a> ·
   <a href="#quick-start">Quick Start</a> ·
   <a href="#architecture">Architecture</a> ·
-  <a href="#security-notes">Security Notes</a>
+  <a href="#security-notes">Security Notes</a> ·
+  <a href="docs/security-analysis.md">Security Analysis</a>
 </p>
 
 ![SPHINCS+-SM3 hero](assets/showcase/hero.png)
@@ -183,6 +184,8 @@ Reproducibility tools
 - The 224-bit choice is motivated by the known Category Five SPHINCS+ with SHA-256 multi-target analysis around the `2^217.4` waterline.
 - The SM3 setting still needs a dedicated formal multi-target second-preimage analysis.
 - `sphincs-sm3-224f-dn` preserves `d*n`, but uses `h=60` to satisfy the current 64-bit subtree-address constraint.
+
+See [docs/security-analysis.md](docs/security-analysis.md) for the detailed assumptions, risk register, and competition-safe claim boundary.
 
 ## Competition Summary
 
