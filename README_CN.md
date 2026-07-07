@@ -110,6 +110,8 @@ python tools/benchmark_params.py --iterations 5 --message-bytes 64
 | --- | --- |
 | [参数搜索报告](docs/parameter-search.md) | 搜索约束、Pareto 候选以及参数选择依据 |
 | [安全分析](docs/security-analysis.md) | 密码学假设、哈希碰撞边界及安全级别评估 |
+| [FIPS 205 对标](docs/fips205-mapping.md) | SLH-DSA 结构映射与合规边界 |
+| [多目标安全分析](docs/multitarget-security.md) | 224 位截断筛选公式与安全水位表 |
 | [性能测试报告](docs/performance.md) | 优化参数集与基线方案的运行性能对比 |
 | [复现证据包](docs/evidence/README.md) | 包含完整命令行输出与测试日志，验证实现的一致性 |
 
@@ -197,4 +199,4 @@ SM3 实例化
 - SM3 场景仍需要独立的多目标第二原像形式化分析。
 - `sphincs-sm3-224f-dn` 保持 `d*n`，但为了满足当前 64 位 subtree address 约束选择 `h=60`。
 
-详细的假设边界、风险清单和安全分析见 [docs/security-analysis.md](docs/security-analysis.md)。
+详细的假设边界、风险清单和安全分析见 [docs/security-analysis.md](docs/security-analysis.md)。FIPS 205 / SLH-DSA 对标见 [docs/fips205-mapping.md](docs/fips205-mapping.md)，224 位多目标安全水位筛选见 [docs/multitarget-security.md](docs/multitarget-security.md)。

@@ -75,3 +75,17 @@ Position it as:
 ## 12. What is the next technical milestone?
 
 Implement an extended-address prototype to evaluate `h=80,d=20`, then compare it against the two implemented 224-bit schemes in signature length, runtime, and safety margin.
+
+## 13. Is this project FIPS 205 compliant?
+
+No. FIPS 205 standardizes SLH-DSA, which is derived from SPHINCS+. This project follows the SPHINCS+/SLH-DSA structural family, but it uses SM3 and experimental 224-bit parameter sets. The right wording is "FIPS 205-inspired structural mapping," not "FIPS-approved implementation."
+
+## 14. How is the multi-target security margin estimated?
+
+The current document uses a screening model:
+
+```text
+log2(W_generic) ~= n - log2(q) - log2(tau)
+```
+
+where `n = 224`, `q` is the number of observed signatures, and `tau` is a coarse per-signature target-count proxy. This is not a formal proof; it is a transparent way to explain why 224-bit truncation must be treated carefully under many-target settings.

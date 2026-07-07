@@ -35,7 +35,7 @@ The choice of 224 bits is a deliberate engineering point rather than an arbitrar
 - It keeps a higher single-object bit length than 192-bit truncation while still producing a visible signature-size reduction.
 - It is motivated by the known Category Five SHA-256 multi-target second-preimage discussion around the high 2^217 work-factor range.
 
-This repository treats that discussion as a reference point, not as a proof for SM3. A dedicated SM3 analysis is still required before any deployment or standardization claim.
+This repository treats that discussion as a reference point, not as a proof for SM3. A dedicated SM3 analysis is still required before any deployment or standardization claim. See [multitarget-security.md](multitarget-security.md) for the current screening model and work-factor table.
 
 ## What Changes and What Does Not
 
@@ -123,6 +123,8 @@ The strongest defensible claim is:
 
 > This project implements and evaluates an experimental SPHINCS+-SM3 parameter optimization that reduces signature size by truncating internal object representation to 224 bits while keeping standard SM3 computation unchanged.
 
+For FIPS 205 / SLH-DSA positioning, use [fips205-mapping.md](fips205-mapping.md). The project follows the SPHINCS+/SLH-DSA structural family but is not a FIPS-approved SLH-DSA parameter set.
+
 The project should not claim:
 
 - that the new parameter sets are standardized,
@@ -132,7 +134,7 @@ The project should not claim:
 
 ## Next Security Work
 
-1. Give a formal SM3-oriented multi-target second-preimage analysis.
+1. Replace the screening model in [multitarget-security.md](multitarget-security.md) with a proof-aligned SM3-oriented multi-target analysis.
 2. Analyze the robust and simple tweakable-hash variants separately.
 3. Extend the address format and implement the `h=80,d=20` candidate.
 4. Extend the parameter-search report with platform-specific performance objectives.

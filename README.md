@@ -108,6 +108,8 @@ The latest local benchmark table is recorded in [docs/performance.md](docs/perfo
 | --- | --- |
 | [Parameter Search](docs/parameter-search.md) | Search constraints, Pareto candidates, and parameter-selection rationale |
 | [Security Analysis](docs/security-analysis.md) | Cryptographic assumptions, collision bounds, and security claim boundary |
+| [FIPS 205 Mapping](docs/fips205-mapping.md) | SLH-DSA structural mapping and compliance boundary |
+| [Multi-Target Security](docs/multitarget-security.md) | 224-bit truncation screening formula and work-factor table |
 | [Performance Benchmarks](docs/performance.md) | Runtime performance comparisons and optimization analysis |
 | [Execution Evidence](docs/evidence/README.md) | Command outputs and logs verifying implementation consistency |
 
@@ -195,4 +197,4 @@ Reproducibility tools
 - The SM3 setting still needs a dedicated formal multi-target second-preimage analysis.
 - `sphincs-sm3-224f-dn` preserves `d*n`, but uses `h=60` to satisfy the current 64-bit subtree-address constraint.
 
-See [docs/security-analysis.md](docs/security-analysis.md) for the detailed assumptions, risk register, and security claim boundary.
+See [docs/security-analysis.md](docs/security-analysis.md) for the detailed assumptions, risk register, and security claim boundary. See [docs/fips205-mapping.md](docs/fips205-mapping.md) for the SLH-DSA/FIPS 205 comparison and [docs/multitarget-security.md](docs/multitarget-security.md) for the 224-bit multi-target screening model.
