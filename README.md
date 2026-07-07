@@ -24,13 +24,11 @@
 
 <p align="center">
   <a href="#results">Results</a> ·
-  <a href="docs/parameter-search.md">Parameter Search</a> ·
   <a href="#performance">Performance</a> ·
-  <a href="#competition-materials">Competition Materials</a> ·
+  <a href="#project-documentation">Project Documentation</a> ·
   <a href="#quick-start">Quick Start</a> ·
   <a href="#architecture">Architecture</a> ·
-  <a href="#security-notes">Security Notes</a> ·
-  <a href="docs/security-analysis.md">Security Analysis</a>
+  <a href="#security-notes">Security Notes</a>
 </p>
 
 ![SPHINCS+-SM3 hero](assets/showcase/hero.png)
@@ -48,14 +46,15 @@
 
 SPHINCS+ is a stateless hash-based post-quantum signature scheme. An SM3-based instantiation is attractive for Chinese cryptographic ecosystems, but the fast high-security parameter shape produces large signatures. This project explores whether the internal object length can be reduced by truncating the output representation while keeping the standard SM3 computation intact.
 
-The repository is organized as a competition-friendly, reproducible experiment:
+The repository is organized as a reproducible experimental study:
 
-- an SM3 backend for the SPHINCS+ reference implementation,
-- two implemented 224-bit parameter sets,
-- parameter-size and address-constraint analysis scripts,
-- SM3 known-answer tests,
-- sign/verify smoke tests for both parameter sets.
+- An SM3 backend for the SPHINCS+ reference implementation.
+- Two implemented 224-bit parameter sets (`sphincs-sm3-224f` and `sphincs-sm3-224f-dn`).
+- Parameter-size and address-constraint analysis scripts.
+- SM3 Known-Answer Tests (KATs).
+- Sign/verify smoke tests for both parameter sets.
 
+> [!NOTE]
 > This is an experimental parameter-optimization study, not a deployment-ready signature standard.
 
 ## Feature Overview
@@ -103,15 +102,14 @@ python tools/benchmark_params.py --iterations 5 --message-bytes 64
 
 The latest local benchmark table is recorded in [docs/performance.md](docs/performance.md). Timings are environment-dependent; the table is intended for same-machine comparison of signature-size savings and runtime trends.
 
-## Competition Materials
+## Project Documentation
 
-| Material | Purpose |
+| Document | Description |
 | --- | --- |
-| [Demo script](docs/demo-script.md) | 3-minute talk track, live commands, and fallback flow |
-| [Review Q&A](docs/review-qna.md) | Likely judge questions and concise answers |
-| [Evidence pack](docs/evidence/README.md) | Captured real command outputs for screenshots and proof |
-| [Parameter search report](docs/parameter-search.md) | Search constraints, Pareto candidates, and parameter-selection rationale |
-| [Security analysis](docs/security-analysis.md) | Assumptions, risks, and competition-safe claim boundary |
+| [Parameter Search](docs/parameter-search.md) | Search constraints, Pareto candidates, and parameter-selection rationale |
+| [Security Analysis](docs/security-analysis.md) | Cryptographic assumptions, collision bounds, and security claim boundary |
+| [Performance Benchmarks](docs/performance.md) | Runtime performance comparisons and optimization analysis |
+| [Execution Evidence](docs/evidence/README.md) | Command outputs and logs verifying implementation consistency |
 
 ## Quick Start
 
@@ -197,8 +195,4 @@ Reproducibility tools
 - The SM3 setting still needs a dedicated formal multi-target second-preimage analysis.
 - `sphincs-sm3-224f-dn` preserves `d*n`, but uses `h=60` to satisfy the current 64-bit subtree-address constraint.
 
-See [docs/security-analysis.md](docs/security-analysis.md) for the detailed assumptions, risk register, and competition-safe claim boundary.
-
-## Competition Summary
-
-This project targets the large-signature problem of SPHINCS+-SM3. It keeps the standard SM3 compression and full 256-bit computation unchanged, truncates only the internal SPHINCS+ object representation to 224 bits, and evaluates the result under multi-target security and implementation constraints. The implemented `sphincs-sm3-224f` parameter set reduces signature size by 20.14%, while the conservative `sphincs-sm3-224f-dn` set preserves the `d*n` proxy and reduces size by 10.65%. The project includes SM3 KATs, static parameter checks, and reproducible sign/verify tests.
+See [docs/security-analysis.md](docs/security-analysis.md) for the detailed assumptions, risk register, and security claim boundary.

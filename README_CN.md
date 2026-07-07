@@ -24,13 +24,11 @@
 
 <p align="center">
   <a href="#实验结果">实验结果</a> ·
-  <a href="docs/parameter-search.md">参数搜索</a> ·
   <a href="#性能测试">性能测试</a> ·
-  <a href="#答辩材料">答辩材料</a> ·
+  <a href="#项目文档">项目文档</a> ·
   <a href="#快速开始">快速开始</a> ·
   <a href="#项目结构">项目结构</a> ·
-  <a href="#安全性说明">安全性说明</a> ·
-  <a href="docs/security-analysis.md">安全分析</a>
+  <a href="#安全性说明">安全性说明</a>
 </p>
 
 ![SPHINCS+-SM3 展示图](assets/showcase/hero.png)
@@ -50,14 +48,15 @@ SPHINCS+ 是无状态的基于哈希后量子签名方案。以国密 SM3 实例
 
 本项目研究一个更聚焦的问题：在保持 SM3 标准压缩函数、填充规则和完整 256 位计算过程不变的前提下，是否可以仅截断 SPHINCS+ 内部对象的表示长度，从而降低签名大小。
 
-项目整理为适合竞赛展示和复现实验的形态：
+本项目提供了完整的、可复现的实验与验证链路：
 
 - 接入 SM3 后端；
-- 给出两组 224 位实验参数；
+- 给出两组 224 位实验参数（`sphincs-sm3-224f` 和 `sphincs-sm3-224f-dn`）；
 - 提供参数长度和地址约束分析脚本；
-- 提供 SM3 标准向量测试；
+- 提供 SM3 标准向量测试（KATs）；
 - 提供两组参数的签名、验签 smoke test。
 
+> [!NOTE]
 > 本项目定位为实验性参数优化与工程可行性验证，不是可直接标准化部署的新签名方案。
 
 ## 功能速览
@@ -105,15 +104,14 @@ python tools/benchmark_params.py --iterations 5 --message-bytes 64
 
 最新本地测试结果记录在 [docs/performance.md](docs/performance.md)。性能数据会受机器、编译器和运行环境影响，因此更适合同机比较签名长度收益和运行时间趋势。
 
-## 答辩材料
+## 项目文档
 
-| 材料 | 用途 |
+| 文档 | 说明 |
 | --- | --- |
-| [演示脚本](docs/demo-script.md) | 3 分钟讲稿、现场命令和兜底流程 |
-| [评委问答](docs/review-qna.md) | 高频问题和简洁回答 |
-| [证据包](docs/evidence/README.md) | 真实命令输出，适合截图和证明 |
-| [参数搜索报告](docs/parameter-search.md) | 搜索约束、Pareto 候选和参数选择依据 |
-| [安全分析](docs/security-analysis.md) | 假设边界、风险清单和竞赛表述口径 |
+| [参数搜索报告](docs/parameter-search.md) | 搜索约束、Pareto 候选以及参数选择依据 |
+| [安全分析](docs/security-analysis.md) | 密码学假设、哈希碰撞边界及安全级别评估 |
+| [性能测试报告](docs/performance.md) | 优化参数集与基线方案的运行性能对比 |
+| [复现证据包](docs/evidence/README.md) | 包含完整命令行输出与测试日志，验证实现的一致性 |
 
 ## 快速开始
 
@@ -199,8 +197,4 @@ SM3 实例化
 - SM3 场景仍需要独立的多目标第二原像形式化分析。
 - `sphincs-sm3-224f-dn` 保持 `d*n`，但为了满足当前 64 位 subtree address 约束选择 `h=60`。
 
-详细的假设边界、风险清单和竞赛答辩口径见 [docs/security-analysis.md](docs/security-analysis.md)。
-
-## 参赛简介（300 字以内）
-
-本作品面向国密后量子签名 SPHINCS+-SM3 签名过长的问题，提出基于截断哈希的实验性优化方案。在保持 SM3 标准压缩函数和完整 256 位计算过程不变的前提下，将 SPHINCS+ 内部对象表示长度截断至 224 位，并结合多目标攻击安全水位、d*n 结构安全量和 64 位地址约束进行参数设计。项目实现 SM3 后端、两组实验参数、SM3 标准向量测试和一键签验脚本。实验显示，直接截断方案签名长度降低 20.14%，保守工程方案降低 10.65%，为 SPHINCS+-SM3 在带宽受限场景中的优化提供了可复现依据。
+详细的假设边界、风险清单和安全分析见 [docs/security-analysis.md](docs/security-analysis.md)。
