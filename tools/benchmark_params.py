@@ -75,8 +75,18 @@ def exe_abs(path: str) -> str:
 
 
 def run(cmd: list[str]) -> subprocess.CompletedProcess[str]:
-    print("$ " + " ".join(cmd), flush=True)
+    print("$ " + " ".join(display_arg(part) for part in cmd), flush=True)
     return subprocess.run(cmd, cwd=REF, text=True, capture_output=True)
+
+
+def display_arg(arg: str) -> str:
+    try:
+        path = Path(arg)
+        if path.is_absolute():
+            return str(path.relative_to(REF))
+    except ValueError:
+        pass
+    return arg
 
 
 def build_and_run(cc: str, param: str, iterations: int, message_bytes: int) -> BenchmarkRow:

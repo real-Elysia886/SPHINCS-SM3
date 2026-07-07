@@ -26,6 +26,7 @@
   <a href="#实验结果">实验结果</a> ·
   <a href="docs/parameter-search.md">参数搜索</a> ·
   <a href="#性能测试">性能测试</a> ·
+  <a href="#答辩材料">答辩材料</a> ·
   <a href="#快速开始">快速开始</a> ·
   <a href="#项目结构">项目结构</a> ·
   <a href="#安全性说明">安全性说明</a> ·
@@ -103,6 +104,16 @@ python tools/benchmark_params.py --iterations 5 --message-bytes 64
 ```
 
 最新本地测试结果记录在 [docs/performance.md](docs/performance.md)。性能数据会受机器、编译器和运行环境影响，因此更适合同机比较签名长度收益和运行时间趋势。
+
+## 答辩材料
+
+| 材料 | 用途 |
+| --- | --- |
+| [演示脚本](docs/demo-script.md) | 3 分钟讲稿、现场命令和兜底流程 |
+| [评委问答](docs/review-qna.md) | 高频问题和简洁回答 |
+| [证据包](docs/evidence/README.md) | 真实命令输出，适合截图和证明 |
+| [参数搜索报告](docs/parameter-search.md) | 搜索约束、Pareto 候选和参数选择依据 |
+| [安全分析](docs/security-analysis.md) | 假设边界、风险清单和竞赛表述口径 |
 
 ## 快速开始
 

@@ -26,6 +26,7 @@
   <a href="#results">Results</a> ·
   <a href="docs/parameter-search.md">Parameter Search</a> ·
   <a href="#performance">Performance</a> ·
+  <a href="#competition-materials">Competition Materials</a> ·
   <a href="#quick-start">Quick Start</a> ·
   <a href="#architecture">Architecture</a> ·
   <a href="#security-notes">Security Notes</a> ·
@@ -101,6 +102,16 @@ python tools/benchmark_params.py --iterations 5 --message-bytes 64
 ```
 
 The latest local benchmark table is recorded in [docs/performance.md](docs/performance.md). Timings are environment-dependent; the table is intended for same-machine comparison of signature-size savings and runtime trends.
+
+## Competition Materials
+
+| Material | Purpose |
+| --- | --- |
+| [Demo script](docs/demo-script.md) | 3-minute talk track, live commands, and fallback flow |
+| [Review Q&A](docs/review-qna.md) | Likely judge questions and concise answers |
+| [Evidence pack](docs/evidence/README.md) | Captured real command outputs for screenshots and proof |
+| [Parameter search report](docs/parameter-search.md) | Search constraints, Pareto candidates, and parameter-selection rationale |
+| [Security analysis](docs/security-analysis.md) | Assumptions, risks, and competition-safe claim boundary |
 
 ## Quick Start
 

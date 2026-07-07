@@ -1,0 +1,2 @@
+params-sphincs-sm3-224f.h: ok (sig=39816, tree_bits=64)
+params-sphincs-sm3-224f-dn.h: ok (sig=44548, tree_bits=57)

@@ -29,9 +29,19 @@ COMMON_SOURCES = [
 
 
 def run(cmd: list[str]) -> int:
-    print("$ " + " ".join(cmd), flush=True)
+    print("$ " + " ".join(display_arg(part) for part in cmd), flush=True)
     proc = subprocess.run(cmd, cwd=REF, text=True)
     return proc.returncode
+
+
+def display_arg(arg: str) -> str:
+    try:
+        path = Path(arg)
+        if path.is_absolute():
+            return str(path.relative_to(REF))
+    except ValueError:
+        pass
+    return arg
 
 
 def exe(name: str) -> str:

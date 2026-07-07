@@ -1,0 +1,27 @@
+| scheme | n | h | d | h/d | WOTS len | d*n | tree bits | sig bytes | saved vs 256f | compatible <= 64 bits |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| sphincs-sha2-256f baseline | 32 | 68 | 17 | 4 | 67 | 544 | 64 | 49856 | 0 (0.00%) | yes |
+| sphincs-sm3-224f implemented | 28 | 68 | 17 | 4 | 59 | 476 | 64 | 39816 | 10040 (20.14%) | yes |
+| sphincs-sm3-224f-dn implemented | 28 | 60 | 20 | 3 | 59 | 560 | 57 | 44548 | 5308 (10.65%) | yes |
+| h=80,d=20 candidate | 28 | 80 | 20 | 4 | 59 | 560 | 76 | 45108 | 4748 (9.52%) | no |
+
+Constraint: the reference address format stores subtree indices in 64 bits, so (h / d) * (d - 1) must be <= 64.
+
+Reference-compatible candidates with d*n >= 544 and tree bits <= 64:
+  h= 20 d=20 h/d= 1 d*n=560 tree_bits=19 sig=43428
+  h= 40 d=20 h/d= 2 d*n=560 tree_bits=38 sig=43988
+  h= 60 d=20 h/d= 3 d*n=560 tree_bits=57 sig=44548
+  h= 21 d=21 h/d= 1 d*n=588 tree_bits=20 sig=45108
+  h= 42 d=21 h/d= 2 d*n=588 tree_bits=40 sig=45696
+  ... 33 more candidates omitted
+
+Pareto front over signature size, d*n, and h (38 of 38 candidates):
+| scheme | n | h | d | h/d | WOTS len | d*n | tree bits | sig bytes | saved vs 256f | compatible <= 64 bits |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| n=28,h=20,d=20 | 28 | 20 | 20 | 1 | 59 | 560 | 19 | 43428 | 6428 (12.89%) | yes |
+| n=28,h=40,d=20 | 28 | 40 | 20 | 2 | 59 | 560 | 38 | 43988 | 5868 (11.77%) | yes |
+| n=28,h=60,d=20 | 28 | 60 | 20 | 3 | 59 | 560 | 57 | 44548 | 5308 (10.65%) | yes |
+| n=28,h=21,d=21 | 28 | 21 | 21 | 1 | 59 | 588 | 20 | 45108 | 4748 (9.52%) | yes |
+| n=28,h=42,d=21 | 28 | 42 | 21 | 2 | 59 | 588 | 40 | 45696 | 4160 (8.34%) | yes |
+
+... 33 more Pareto candidates omitted

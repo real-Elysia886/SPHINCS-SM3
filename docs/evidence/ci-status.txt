@@ -1,0 +1,3 @@
+completed	success	Add Pareto parameter search report	CI	main	push	28780336862	1m40s	2026-07-06T09:06:13Z
+completed	success	Add security analysis notes	CI	main	push	28778472986	1m36s	2026-07-06T08:32:13Z
+completed	success	Add reproducible performance benchmarks	CI	main	push	28778130791	1m33s	2026-07-06T08:25:59Z
