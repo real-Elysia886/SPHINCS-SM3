@@ -29,6 +29,7 @@ DET_HEADERS = $(HEADERS:randombytes.%=rng.%)
 
 TESTS =         test/fors \
 		test/spx \
+		test/randombytes_failures \
 
 BENCHMARK = test/benchmark
 
@@ -60,6 +61,9 @@ test/haraka: test/haraka.c $(filter-out haraka.c,$(SOURCES)) $(HEADERS)
 
 test/sm3_kat: test/sm3_kat.c sm3.c sm3.h params.h context.h
 	$(CC) $(CFLAGS) -o $@ sm3.c $< $(LDLIBS)
+
+test/randombytes_failures: test/randombytes_failures.c randombytes.c randombytes.h
+	$(CC) $(CFLAGS) -o $@ $< $(LDLIBS)
 
 test/%.exec: test/%
 	@$<

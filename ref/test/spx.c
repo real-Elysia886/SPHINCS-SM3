@@ -87,6 +87,9 @@ int main(void)
 
     if (crypto_sign_keypair(pk, sk)) {
         printf("failed!\n");
+        free(m);
+        free(sm);
+        free(mout);
         return -1;
     }
     printf("successful.\n");
@@ -100,7 +103,7 @@ int main(void)
 
         if (smlen != SPX_BYTES + SPX_MLEN) {
             printf("  X smlen incorrect [%llu != %u]!\n",
-                   smlen, SPX_BYTES);
+                   smlen, SPX_BYTES + SPX_MLEN);
             ret = -1;
         }
         else {
@@ -132,18 +135,9 @@ int main(void)
             printf("    output message as expected.\n");
         }
 
-        /* Test if signature is valid when validating in-place. */
-        if (crypto_sign_open(sm, &mlen, sm, smlen, pk)) {
-            printf("  X in-place verification failed!\n");
-            ret = -1;
-        }
-        else {
-            printf("    in-place verification succeeded.\n");
-        }
-
         /* Test if flipping bits invalidates the signature (it should). */
 
-        /* Flip the first bit of the message. Should invalidate. */
+        /* Flip one bit in the final message byte. Should invalidate. */
         sm[smlen - 1] ^= 1;
         if (!crypto_sign_open(mout, &mlen, sm, smlen, pk)) {
             printf("  X flipping a bit of m DID NOT invalidate signature!\n");
@@ -156,7 +150,7 @@ int main(void)
 
 #ifdef SPX_TEST_INVALIDSIG
         int j;
-        /* Flip one bit per hash; the signature is entirely hashes. */
+        /* Flip one representative bit in every N-byte signature block. */
         for (j = 0; j < (int)(smlen - SPX_MLEN); j += SPX_N) {
             sm[j] ^= 1;
             if (!crypto_sign_open(mout, &mlen, sm, smlen, pk)) {
@@ -168,9 +162,18 @@ int main(void)
             sm[j] ^= 1;
         }
         if (j >= (int)(smlen - SPX_MLEN)) {
-            printf("    changing any signature hash invalidates signature.\n");
+            printf("    changing every sampled signature block invalidates signature.\n");
         }
 #endif
+
+        /* Run this last because successful in-place opening overwrites sm. */
+        if (crypto_sign_open(sm, &mlen, sm, smlen, pk)) {
+            printf("  X in-place verification failed!\n");
+            ret = -1;
+        }
+        else {
+            printf("    in-place verification succeeded.\n");
+        }
     }
 
     free(m);

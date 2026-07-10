@@ -5,8 +5,8 @@ $ test\sm3_kat_sm3_224f.exe
 SM3 KAT passed: empty
 SM3 KAT passed: abc
 SM3 KAT passed: abcd x 16
-$ clang -Wall -Wextra -Wpedantic -O2 -std=c99 -DPARAMS=sphincs-sm3-224f -DSPX_SIGNATURES=1 -DSPX_MLEN=32 -o test\spx_sm3_224f.exe address.c randombytes.c merkle.c wots.c wotsx1.c utils.c utilsx1.c fors.c sign.c sm3.c hash_sm3.c thash_sm3_robust.c test\spx.c
-$ test\spx_sm3_224f.exe
+$ clang -Wall -Wextra -Wpedantic -O2 -std=c99 -DPARAMS=sphincs-sm3-224f -DSPX_SIGNATURES=1 -DSPX_MLEN=32 -o test\spx_sm3_224f_robust.exe address.c randombytes.c merkle.c wots.c wotsx1.c utils.c utilsx1.c fors.c sign.c sm3.c hash_sm3.c thash_sm3_robust.c test\spx.c
+$ test\spx_sm3_224f_robust.exe
 Wide tree-index helper test passed.
 Generating keypair.. successful.
 Testing 1 signatures..
@@ -15,15 +15,15 @@ Testing 1 signatures..
     verification succeeded.
     mlen as expected [32].
     output message as expected.
-    in-place verification succeeded.
     flipping a bit of m invalidates signature.
+    in-place verification succeeded.
 $ clang -Wall -Wextra -Wpedantic -O2 -std=c99 -DPARAMS=sphincs-sm3-224f-dn -o test\sm3_kat_sm3_224f_dn.exe sm3.c test\sm3_kat.c
 $ test\sm3_kat_sm3_224f_dn.exe
 SM3 KAT passed: empty
 SM3 KAT passed: abc
 SM3 KAT passed: abcd x 16
-$ clang -Wall -Wextra -Wpedantic -O2 -std=c99 -DPARAMS=sphincs-sm3-224f-dn -DSPX_SIGNATURES=1 -DSPX_MLEN=32 -o test\spx_sm3_224f_dn.exe address.c randombytes.c merkle.c wots.c wotsx1.c utils.c utilsx1.c fors.c sign.c sm3.c hash_sm3.c thash_sm3_robust.c test\spx.c
-$ test\spx_sm3_224f_dn.exe
+$ clang -Wall -Wextra -Wpedantic -O2 -std=c99 -DPARAMS=sphincs-sm3-224f-dn -DSPX_SIGNATURES=1 -DSPX_MLEN=32 -o test\spx_sm3_224f_dn_robust.exe address.c randombytes.c merkle.c wots.c wotsx1.c utils.c utilsx1.c fors.c sign.c sm3.c hash_sm3.c thash_sm3_robust.c test\spx.c
+$ test\spx_sm3_224f_dn_robust.exe
 Wide tree-index helper test passed.
 Generating keypair.. successful.
 Testing 1 signatures..
@@ -32,15 +32,15 @@ Testing 1 signatures..
     verification succeeded.
     mlen as expected [32].
     output message as expected.
-    in-place verification succeeded.
     flipping a bit of m invalidates signature.
+    in-place verification succeeded.
 $ clang -Wall -Wextra -Wpedantic -O2 -std=c99 -DPARAMS=sphincs-sm3-224f-h80 -o test\sm3_kat_sm3_224f_h80.exe sm3.c test\sm3_kat.c
 $ test\sm3_kat_sm3_224f_h80.exe
 SM3 KAT passed: empty
 SM3 KAT passed: abc
 SM3 KAT passed: abcd x 16
-$ clang -Wall -Wextra -Wpedantic -O2 -std=c99 -DPARAMS=sphincs-sm3-224f-h80 -DSPX_SIGNATURES=1 -DSPX_MLEN=32 -o test\spx_sm3_224f_h80.exe address.c randombytes.c merkle.c wots.c wotsx1.c utils.c utilsx1.c fors.c sign.c sm3.c hash_sm3.c thash_sm3_robust.c test\spx.c
-$ test\spx_sm3_224f_h80.exe
+$ clang -Wall -Wextra -Wpedantic -O2 -std=c99 -DPARAMS=sphincs-sm3-224f-h80 -DSPX_SIGNATURES=1 -DSPX_MLEN=32 -o test\spx_sm3_224f_h80_robust.exe address.c randombytes.c merkle.c wots.c wotsx1.c utils.c utilsx1.c fors.c sign.c sm3.c hash_sm3.c thash_sm3_robust.c test\spx.c
+$ test\spx_sm3_224f_h80_robust.exe
 Wide tree-index helper test passed.
 Generating keypair.. successful.
 Testing 1 signatures..
@@ -49,7 +49,7 @@ Testing 1 signatures..
     verification succeeded.
     mlen as expected [32].
     output message as expected.
-    in-place verification succeeded.
     flipping a bit of m invalidates signature.
+    in-place verification succeeded.
 
 [exit code: 0]

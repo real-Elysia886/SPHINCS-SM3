@@ -16,10 +16,10 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.11"
 
@@ -31,11 +31,25 @@ jobs:
       - name: Check parameter consistency
         run: python tools/check_consistency.py
 
+      - name: Test POSIX random-source failure recovery
+        working-directory: ref
+        run: |
+          make test/randombytes_failures PARAMS=sphincs-sm3-224f-h80
+          ./test/randombytes_failures
+
       - name: Search and print parameter candidates
         run: python tools/analyze_params.py --search --pareto
 
       - name: Run clang smoke tests
         run: python tools/clang_smoke_test.py --signatures 2 --message-bytes 64
+
+      - name: Run simple-thash wide-address smoke test
+        run: >-
+          python tools/clang_smoke_test.py
+          --params sphincs-sm3-224f-h80
+          --thash simple
+          --signatures 1
+          --message-bytes 65
 
       - name: Run API benchmark compile check
         run: python tools/benchmark_params.py --iterations 1 --message-bytes 32 --no-write-doc

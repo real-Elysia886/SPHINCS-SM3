@@ -35,7 +35,7 @@ void treehashx1(unsigned char *root, unsigned char *auth_path,
     SPX_VLA(uint8_t, stack, tree_height*SPX_N);
 
     uint32_t idx;
-    uint32_t max_idx = (uint32_t)((1 << tree_height) - 1);
+    uint32_t max_idx = (UINT32_C(1) << tree_height) - 1;
     for (idx = 0;; idx++) {
         unsigned char current[2*SPX_N];   /* Current logical node is at */
             /* index[SPX_N].  We do this to minimize the number of copies */

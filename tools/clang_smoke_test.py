@@ -24,7 +24,6 @@ COMMON_SOURCES = [
     "sign.c",
     "sm3.c",
     "hash_sm3.c",
-    "thash_sm3_robust.c",
 ]
 
 
@@ -57,6 +56,17 @@ def main() -> int:
     parser.add_argument("--clang", default="clang")
     parser.add_argument("--signatures", default="1")
     parser.add_argument("--message-bytes", default="32")
+    parser.add_argument("--thash", choices=["robust", "simple"], default="robust")
+    parser.add_argument("--keep-binaries", action="store_true")
+    parser.add_argument(
+        "--params",
+        nargs="+",
+        default=[
+            "sphincs-sm3-224f",
+            "sphincs-sm3-224f-dn",
+            "sphincs-sm3-224f-h80",
+        ],
+    )
     args = parser.parse_args()
 
     if shutil.which(args.clang) is None:
@@ -64,14 +74,12 @@ def main() -> int:
         return 127
 
     ret = 0
-    for param in [
-        "sphincs-sm3-224f",
-        "sphincs-sm3-224f-dn",
-        "sphincs-sm3-224f-h80",
-    ]:
+    artifacts: list[Path] = []
+    for param in args.params:
         suffix = param.replace("sphincs-", "").replace("-", "_")
         kat = exe(f"sm3_kat_{suffix}")
-        spx = exe(f"spx_{suffix}")
+        spx = exe(f"spx_{suffix}_{args.thash}")
+        artifacts.extend([REF / kat, REF / spx])
 
         step_ret = run([
             args.clang,
@@ -103,11 +111,16 @@ def main() -> int:
             "-o",
             spx,
             *COMMON_SOURCES,
+            f"thash_sm3_{args.thash}.c",
             "test\\spx.c" if "\\" in spx else "test/spx.c",
         ])
         if step_ret == 0:
             step_ret |= run([exe_abs(spx)])
         ret |= step_ret
+
+    if not args.keep_binaries:
+        for artifact in artifacts:
+            artifact.unlink(missing_ok=True)
 
     return 0 if ret == 0 else 1
 

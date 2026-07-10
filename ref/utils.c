@@ -6,6 +6,10 @@
 #include "thash.h"
 #include "address.h"
 
+#if SPX_TREE_HEIGHT > 31
+    #error TreeHash supports per-layer tree heights of at most 31 bits
+#endif
+
 /**
  * Converts the value of 'in' to 'outlen' bytes in big-endian byte order.
  */
@@ -177,8 +181,9 @@ void treehash(unsigned char *root, unsigned char *auth_path, const spx_ctx* ctx,
     unsigned int offset = 0;
     uint32_t idx;
     uint32_t tree_idx;
+    const uint32_t leaf_count = UINT32_C(1) << tree_height;
 
-    for (idx = 0; idx < (uint32_t)(1 << tree_height); idx++) {
+    for (idx = 0; idx < leaf_count; idx++) {
         /* Add the next leaf node to the stack. */
         gen_leaf(stack + offset*SPX_N, ctx, idx + idx_offset, tree_addr);
         offset++;

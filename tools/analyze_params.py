@@ -75,7 +75,7 @@ class Params:
             self.tree_height is not None
             and self.tree_bits is not None
             and self.tree_bits <= address_bits
-            and self.tree_height <= 32
+            and self.tree_height <= 31
         )
 
     @property
@@ -254,7 +254,8 @@ python tools/analyze_params.py --search --pareto --write-doc
 | Total height range `h` | {args.min_h}..{args.max_h} |
 | Layer range `d` | {args.min_d}..{args.max_d} |
 | Minimum `d*n` | {args.min_dn} |
-| Maximum subtree-address bits | {args.address_bits} |
+| Selected address-format bits | {args.address_bits} |
+| Search tree-bit ceiling | {args.max_tree_bits} |
 | Maximum per-layer tree height | {args.max_tree_height} |
 
 The unmodified reference address path stores subtree indices in 64 bits, so a parameter set using the original compressed layout must satisfy:
@@ -292,9 +293,9 @@ The Pareto front is computed over three objectives:
 
 ## Next Work
 
-1. Add deterministic tests for the wide tree-index conversion helpers.
-2. Add simple/robust tweakable-hash comparisons.
-3. Expand the search objective set with performance measurements once more platforms are tested.
+1. Add cross-platform randomized property tests for the wide tree-index helpers.
+2. Expand simple/robust tweakable-hash performance comparisons.
+3. Add more platform measurements to the parameter-search objectives.
 """
     path.write_text(text, encoding="utf-8")
     return path
@@ -315,14 +316,19 @@ def main() -> int:
     parser.add_argument("--max-d", type=int, default=40)
     parser.add_argument("--min-dn", type=int, default=BASELINE.dn)
     parser.add_argument("--address-bits", type=int, default=64)
-    parser.add_argument("--max-tree-bits", type=int, default=64)
-    parser.add_argument("--max-tree-height", type=int, default=32)
+    parser.add_argument(
+        "--max-tree-bits",
+        type=int,
+        default=128,
+        help="absolute search ceiling; address compatibility is checked separately",
+    )
+    parser.add_argument("--max-tree-height", type=int, default=31)
     parser.add_argument("--top", type=int, default=12)
     parser.add_argument(
         "--allow-incompatible",
         dest="require_ref_compatible",
         action="store_false",
-        help="include candidates that fail the current address compatibility check",
+        help="include candidates above --address-bits, up to --max-tree-bits",
     )
     parser.set_defaults(require_ref_compatible=True)
     args = parser.parse_args()

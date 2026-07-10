@@ -19,8 +19,9 @@ python tools/analyze_params.py --search --pareto --write-doc
 | Total height range `h` | 1..100 |
 | Layer range `d` | 1..40 |
 | Minimum `d*n` | 544 |
-| Maximum subtree-address bits | 64 |
-| Maximum per-layer tree height | 32 |
+| Selected address-format bits | 64 |
+| Search tree-bit ceiling | 128 |
+| Maximum per-layer tree height | 31 |
 
 The unmodified reference address path stores subtree indices in 64 bits, so a parameter set using the original compressed layout must satisfy:
 
@@ -88,6 +89,6 @@ The Pareto front is computed over three objectives:
 
 ## Next Work
 
-1. Add deterministic tests for the wide tree-index conversion helpers.
-2. Add simple/robust tweakable-hash comparisons.
-3. Expand the search objective set with performance measurements once more platforms are tested.
+1. Add cross-platform randomized property tests for the wide tree-index helpers.
+2. Expand simple/robust tweakable-hash performance comparisons.
+3. Add more platform measurements to the parameter-search objectives.

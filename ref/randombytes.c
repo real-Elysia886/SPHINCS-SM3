@@ -9,6 +9,7 @@ This code was taken from the SPHINCS reference implementation and is public doma
 #include <bcrypt.h>
 #pragma comment(lib, "bcrypt")
 #else
+#include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
 #endif
@@ -23,40 +24,44 @@ void randombytes(unsigned char *x, unsigned long long xlen)
     while (xlen > 0) {
         ULONG chunk = xlen > 1048576 ? 1048576 : (ULONG)xlen;
         if (BCryptGenRandom(NULL, x, chunk, BCRYPT_USE_SYSTEM_PREFERRED_RNG) != 0) {
+            Sleep(1);
             continue;
         }
         x += chunk;
         xlen -= chunk;
     }
 #else
-    unsigned long long i;
-
-    if (fd == -1) {
-        for (;;) {
-            fd = open("/dev/urandom", O_RDONLY);
-            if (fd != -1) {
-                break;
-            }
-            sleep(1);
-        }
-    }
+    size_t request;
+    ssize_t received;
 
     while (xlen > 0) {
-        if (xlen < 1048576) {
-            i = xlen;
-        }
-        else {
-            i = 1048576;
+        while (fd == -1) {
+            fd = open("/dev/urandom", O_RDONLY);
+            if (fd == -1) {
+                sleep(1);
+            }
         }
 
-        i = (unsigned long long)read(fd, x, i);
-        if (i < 1) {
+        request = xlen < 1048576 ? (size_t)xlen : (size_t)1048576;
+        received = read(fd, x, request);
+        if (received < 0) {
+            if (errno == EINTR) {
+                continue;
+            }
+            close(fd);
+            fd = -1;
+            sleep(1);
+            continue;
+        }
+        if (received == 0) {
+            close(fd);
+            fd = -1;
             sleep(1);
             continue;
         }
 
-        x += i;
-        xlen -= i;
+        x += (size_t)received;
+        xlen -= (unsigned long long)received;
     }
 #endif
 }

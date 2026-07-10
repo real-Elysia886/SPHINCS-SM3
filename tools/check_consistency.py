@@ -65,6 +65,23 @@ def parse_defines(path: Path) -> dict[str, int]:
     return values
 
 
+def parse_tree_addr_bytes(path: Path) -> int:
+    text = path.read_text(encoding="utf-8")
+    include = re.search(r'^\s*#include\s+"\.\./([^"]+_offsets\.h)"', text, re.MULTILINE)
+    if include is None:
+        raise AssertionError(f"{path.name}: missing offsets header include")
+    offsets_path = path.parent.parent / include.group(1)
+    offsets_text = offsets_path.read_text(encoding="utf-8")
+    match = re.search(
+        r"^\s*#define\s+SPX_TREE_ADDR_BYTES\s+(\d+)\s*$",
+        offsets_text,
+        re.MULTILINE,
+    )
+    if match is None:
+        raise AssertionError(f"{offsets_path.name}: missing SPX_TREE_ADDR_BYTES")
+    return int(match.group(1))
+
+
 def wots_len(n: int, w: int) -> int:
     logw = {16: 4, 256: 8}[w]
     len1 = 8 * n // logw
@@ -102,7 +119,7 @@ def main() -> int:
         actual = {
             **values,
             **derived,
-            "TREE_ADDR_BYTES": expected["TREE_ADDR_BYTES"],
+            "TREE_ADDR_BYTES": parse_tree_addr_bytes(path),
         }
         for key, want in expected.items():
             got = actual[key]
