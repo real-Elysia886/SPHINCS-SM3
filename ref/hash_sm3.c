@@ -73,7 +73,8 @@ void gen_message_random(unsigned char *R, const unsigned char *sk_prf,
     memcpy(R, buf, SPX_N);
 }
 
-void hash_message(unsigned char *digest, uint64_t *tree, uint32_t *leaf_idx,
+void hash_message(unsigned char *digest, spx_tree_index *tree,
+                  uint32_t *leaf_idx,
                   const unsigned char *R, const unsigned char *pk,
                   const unsigned char *m, unsigned long long mlen,
                   const spx_ctx *ctx)
@@ -124,15 +125,15 @@ void hash_message(unsigned char *digest, uint64_t *tree, uint32_t *leaf_idx,
     memcpy(digest, bufp, SPX_FORS_MSG_BYTES);
     bufp += SPX_FORS_MSG_BYTES;
 
-#if SPX_TREE_BITS > 64
-    #error For given height and depth, 64 bits cannot represent all subtrees
+#if SPX_TREE_BITS > 128
+    #error For given height and depth, 128 bits cannot represent all subtrees
 #endif
 
     if (SPX_D == 1) {
-        *tree = 0;
+        tree->high = 0;
+        tree->low = 0;
     } else {
-        *tree = bytes_to_ull(bufp, SPX_TREE_BYTES);
-        *tree &= (~(uint64_t)0) >> (64 - SPX_TREE_BITS);
+        tree_index_from_bytes(tree, bufp, SPX_TREE_BYTES, SPX_TREE_BITS);
     }
     bufp += SPX_TREE_BYTES;
 

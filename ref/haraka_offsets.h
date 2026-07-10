@@ -15,6 +15,8 @@
 #define SPX_OFFSET_TREE_HGT  27  /* The byte used to specify the height of this node in the FORS or Merkle tree */
 #define SPX_OFFSET_TREE_INDEX 28 /* The start of the 4 byte field used to specify the node in the FORS or Merkle tree */
 
+#define SPX_TREE_ADDR_BYTES 8
+
 #define SPX_HARAKA 1
 
 #endif /* HARAKA_OFFSETS_H_ */

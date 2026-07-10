@@ -37,7 +37,7 @@
   <tr>
     <td align="center"><strong>20.14%</strong><br>已实现方案最大签名长度降幅</td>
     <td align="center"><strong>39,816 B</strong><br><code>sphincs-sm3-224f</code> 签名长度</td>
-    <td align="center"><strong>44,548 B</strong><br><code>sphincs-sm3-224f-dn</code> 保守工程方案</td>
+    <td align="center"><strong>76 位索引</strong><br><code>sphincs-sm3-224f-h80</code> 宽地址原型</td>
     <td align="center"><strong>SM3 KAT + 签验测试</strong><br>可复现实验链路</td>
   </tr>
 </table>
@@ -51,10 +51,10 @@ SPHINCS+ 是无状态的基于哈希后量子签名方案。以国密 SM3 实例
 本项目提供了完整的、可复现的实验与验证链路：
 
 - 接入 SM3 后端；
-- 给出两组 224 位实验参数（`sphincs-sm3-224f` 和 `sphincs-sm3-224f-dn`）；
+- 给出三组 224 位实验参数，其中包括隔离实现的宽地址原型；
 - 提供参数长度和地址约束分析脚本；
 - 提供 SM3 标准向量测试（KATs）；
-- 提供两组参数的签名、验签 smoke test。
+- 提供三组参数的签名、验签 smoke test。
 
 > [!NOTE]
 > 本项目定位为实验性参数优化与工程可行性验证，不是可直接标准化部署的新签名方案。
@@ -66,7 +66,7 @@ SPHINCS+ 是无状态的基于哈希后量子签名方案。以国密 SM3 实例
 | SM3 后端 | `sm3.c`、`hash_sm3.c`、`thash_sm3_simple.c`、`thash_sm3_robust.c` |
 | 224 位截断 | SM3 仍完整计算 256 位摘要，SPHINCS+ 对象仅保留前 28 字节 |
 | 参数搜索 | 可复现的长度公式、地址约束检查和 Pareto 候选搜索 |
-| 地址约束检查 | 显式检查参考实现中 64 位 subtree address 限制 |
+| 宽树地址 | 使用可移植的高低 64 位索引运算，并为 76 位原型隔离启用 12 字节树字段 |
 | SM3 KAT | 覆盖空串、`abc`、`abcd` 重复 16 次三个标准向量 |
 | 签验测试 | keygen、sign、verify、原地验签和篡改失效测试 |
 | Windows 复现 | `tools/clang_smoke_test.py` 支持无 GNU Make 的 clang 环境 |
@@ -84,15 +84,15 @@ SPHINCS+ 是无状态的基于哈希后量子签名方案。以国密 SM3 实例
 | SHA2-256f 基线 | 32 | 68 | 17 | 4 | 67 | 544 | 64 | 49856 | 0 | 基线 |
 | sphincs-sm3-224f | 28 | 68 | 17 | 4 | 59 | 476 | 64 | 39816 | 10040 (20.14%) | 已实现 |
 | sphincs-sm3-224f-dn | 28 | 60 | 20 | 3 | 59 | 560 | 57 | 44548 | 5308 (10.65%) | 已实现 |
-| h=80,d=20 候选 | 28 | 80 | 20 | 4 | 59 | 560 | 76 | 45108 | 4748 (9.52%) | 需扩展地址表示 |
+| sphincs-sm3-224f-h80 | 28 | 80 | 20 | 4 | 59 | 560 | 76 | 45108 | 4748 (9.52%) | 宽地址原型 |
 
-参考实现使用 64 位字段保存 subtree index，因此需要满足：
+原始压缩地址链路使用 64 位字段保存 subtree index，因此需要满足：
 
 ```text
 (h / d) * (d - 1) <= 64
 ```
 
-所以 `h=80,d=20` 虽然是有价值的理论候选，但当前地址格式无法直接表示。
+新增的 `sphincs-sm3-224f-h80` 通过独立的 12 字节树字段和 26 字节 SM3 压缩地址跨过该限制；原有参数仍保持 8 字节树字段和 22 字节压缩地址。
 
 ## 性能测试
 
@@ -127,8 +127,9 @@ python tools/analyze_params.py --search --pareto
 预期关键输出：
 
 ```text
-params-sphincs-sm3-224f.h: ok (sig=39816, tree_bits=64)
-params-sphincs-sm3-224f-dn.h: ok (sig=44548, tree_bits=57)
+params-sphincs-sm3-224f.h: ok (sig=39816, tree_bits=64, tree_addr_bytes=8)
+params-sphincs-sm3-224f-dn.h: ok (sig=44548, tree_bits=57, tree_addr_bytes=8)
+params-sphincs-sm3-224f-h80.h: ok (sig=45108, tree_bits=76, tree_addr_bytes=12)
 ```
 
 ### Windows / clang 一键测试
@@ -137,7 +138,7 @@ params-sphincs-sm3-224f-dn.h: ok (sig=44548, tree_bits=57)
 python tools/clang_smoke_test.py
 ```
 
-该脚本会编译并运行 SM3 标准向量测试，以及两组 SM3 参数的密钥生成、签名、验签、原地验签和篡改失效测试。
+该脚本会编译并运行 SM3 标准向量测试，以及三组 SM3 参数的密钥生成、签名、验签、原地验签和篡改失效测试。
 
 ### GNU Make 流程
 
@@ -153,6 +154,10 @@ make test/spx PARAMS=sphincs-sm3-224f THASH=robust
 
 make clean
 make test/spx PARAMS=sphincs-sm3-224f-dn THASH=robust
+./test/spx
+
+make clean
+make test/spx PARAMS=sphincs-sm3-224f-h80 THASH=robust
 ./test/spx
 ```
 
@@ -180,10 +185,12 @@ SM3 实例化
   ref/thash_sm3_simple.c      simple 树哈希
   ref/thash_sm3_robust.c      robust 树哈希
   ref/sm3_offsets.h           压缩地址布局
+  ref/sm3_extended_offsets.h  隔离的宽地址布局
 
 实验参数
   ref/params/params-sphincs-sm3-224f.h
   ref/params/params-sphincs-sm3-224f-dn.h
+  ref/params/params-sphincs-sm3-224f-h80.h
 
 复现实验工具
   tools/analyze_params.py
@@ -198,5 +205,6 @@ SM3 实例化
 - 224 位选择参考了 Category Five SPHINCS+ with SHA-256 多目标攻击分析中的 `2^217.4` 水位。
 - SM3 场景仍需要独立的多目标第二原像形式化分析。
 - `sphincs-sm3-224f-dn` 保持 `d*n`，但为了满足当前 64 位 subtree address 约束选择 `h=60`。
+- `sphincs-sm3-224f-h80` 验证了 76 位 subtree index 的工程可行性，但独立地址编码仍属实验性质，不代表已经完成安全证明。
 
 详细的假设边界、风险清单和安全分析见 [docs/security-analysis.md](docs/security-analysis.md)。FIPS 205 / SLH-DSA 对标见 [docs/fips205-mapping.md](docs/fips205-mapping.md)，224 位多目标安全水位筛选见 [docs/multitarget-security.md](docs/multitarget-security.md)。

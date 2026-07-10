@@ -16,12 +16,13 @@ void set_layer_addr(uint32_t addr[8], uint32_t layer)
 /*
  * Specify which Merkle tree within the level (the "tree address") we're working on
  */
-void set_tree_addr(uint32_t addr[8], uint64_t tree)
+void set_tree_addr(uint32_t addr[8], const spx_tree_index *tree)
 {
-#if (SPX_TREE_HEIGHT * (SPX_D - 1)) > 64
-    #error Subtree addressing is currently limited to at most 2^64 trees
+#if (SPX_TREE_HEIGHT * (SPX_D - 1)) > (8 * SPX_TREE_ADDR_BYTES)
+    #error Subtree addressing exceeds the configured tree address field
 #endif
-    ull_to_bytes(&((unsigned char *)addr)[SPX_OFFSET_TREE], 8, tree );
+    tree_index_to_bytes(&((unsigned char *)addr)[SPX_OFFSET_TREE],
+                        SPX_TREE_ADDR_BYTES, tree);
 }
 
 /*
@@ -41,7 +42,7 @@ void set_type(uint32_t addr[8], uint32_t type)
  */
 void copy_subtree_addr(uint32_t out[8], const uint32_t in[8])
 {
-    memcpy( out, in, SPX_OFFSET_TREE+8 );
+    memcpy(out, in, SPX_OFFSET_TREE + SPX_TREE_ADDR_BYTES);
 }
 
 /* These functions are used for OTS addresses. */
@@ -61,7 +62,7 @@ void set_keypair_addr(uint32_t addr[8], uint32_t keypair)
  */
 void copy_keypair_addr(uint32_t out[8], const uint32_t in[8])
 {
-    memcpy( out, in, SPX_OFFSET_TREE+8 );
+    memcpy(out, in, SPX_OFFSET_TREE + SPX_TREE_ADDR_BYTES);
     memcpy( (unsigned char *)out + SPX_OFFSET_KP_ADDR, (unsigned char *)in + SPX_OFFSET_KP_ADDR, 4); 
 }
 

@@ -9,7 +9,9 @@
 
 #define SPX_SM3_BLOCK_BYTES 64
 #define SPX_SM3_OUTPUT_BYTES 32
+#ifndef SPX_SM3_ADDR_BYTES
 #define SPX_SM3_ADDR_BYTES 22
+#endif
 
 #if SPX_SM3_OUTPUT_BYTES < SPX_N
     #error Linking against SM3 with N larger than 32 bytes is not supported

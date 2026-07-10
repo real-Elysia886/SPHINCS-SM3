@@ -64,7 +64,11 @@ def main() -> int:
         return 127
 
     ret = 0
-    for param in ["sphincs-sm3-224f", "sphincs-sm3-224f-dn"]:
+    for param in [
+        "sphincs-sm3-224f",
+        "sphincs-sm3-224f-dn",
+        "sphincs-sm3-224f-h80",
+    ]:
         suffix = param.replace("sphincs-", "").replace("-", "_")
         kat = exe(f"sm3_kat_{suffix}")
         spx = exe(f"spx_{suffix}")

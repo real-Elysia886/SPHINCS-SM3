@@ -43,6 +43,68 @@ unsigned long long bytes_to_ull(const unsigned char *in, unsigned int inlen)
     return retval;
 }
 
+void tree_index_from_bytes(spx_tree_index *tree, const unsigned char *in,
+                           unsigned int inlen, unsigned int bits)
+{
+    unsigned int i;
+    unsigned int high_bits;
+
+    tree->high = 0;
+    tree->low = 0;
+    for (i = 0; i < inlen; i++) {
+        tree->high = (tree->high << 8) | (tree->low >> 56);
+        tree->low = (tree->low << 8) | in[i];
+    }
+
+    if (bits < 64) {
+        tree->high = 0;
+        tree->low &= (~(uint64_t)0) >> (64 - bits);
+    } else if (bits == 64) {
+        tree->high = 0;
+    } else if (bits < 128) {
+        high_bits = bits - 64;
+        tree->high &= (~(uint64_t)0) >> (64 - high_bits);
+    }
+}
+
+void tree_index_to_bytes(unsigned char *out, unsigned int outlen,
+                         const spx_tree_index *tree)
+{
+    spx_tree_index value = *tree;
+    int i;
+
+    for (i = (signed int)outlen - 1; i >= 0; i--) {
+        out[i] = (unsigned char)(value.low & 0xff);
+        value.low = (value.low >> 8) | (value.high << 56);
+        value.high >>= 8;
+    }
+}
+
+uint32_t tree_index_low_bits(const spx_tree_index *tree, unsigned int bits)
+{
+    if (bits == 32) {
+        return (uint32_t)tree->low;
+    }
+    return (uint32_t)(tree->low & (((uint64_t)1 << bits) - 1));
+}
+
+void tree_index_shift_right(spx_tree_index *tree, unsigned int bits)
+{
+    if (bits == 0) {
+        return;
+    }
+    if (bits < 64) {
+        tree->low = (tree->low >> bits) | (tree->high << (64 - bits));
+        tree->high >>= bits;
+    } else if (bits < 128) {
+        tree->low = tree->high >> (bits - 64);
+        tree->high = 0;
+    } else {
+        tree->low = 0;
+        tree->high = 0;
+    }
+}
+
 /**
  * Computes a root node given a leaf and an auth path.
  * Expects address to be complete other than the tree_height and tree_index.

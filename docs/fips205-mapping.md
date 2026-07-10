@@ -35,9 +35,9 @@ It is not:
 | FORS | `ref/fors.c` | Same component family |
 | Tweakable hash calls | `ref/thash_sm3_simple.c`, `ref/thash_sm3_robust.c` | SM3-specific experimental backend |
 | Approved hash families | SHA2 / SHAKE in FIPS 205 | This project uses SM3, so it is outside FIPS 205 approval |
-| Approved parameter sets | SLH-DSA parameter sets | This project defines experimental `sphincs-sm3-224f` and `sphincs-sm3-224f-dn` |
+| Approved parameter sets | SLH-DSA parameter sets | This project defines three experimental SM3 parameter sets, none FIPS-approved |
 | Object length `n` | `SPX_N = 28` | Experimental 224-bit internal representation |
-| Address representation | `ref/address.c`, `ref/sm3_offsets.h` | Reference-style address layout with current 64-bit subtree-index limit |
+| Address representation | `ref/address.c`, `ref/sm3_offsets.h`, `ref/sm3_extended_offsets.h` | Original 64-bit path plus an isolated project-specific 96-bit field prototype |
 | Reproducibility tests | `.github/workflows/ci.yml`, `tools/*` | Project-specific engineering validation |
 
 ## What Is Preserved
@@ -59,7 +59,7 @@ The experiment intentionally preserves the following design properties from the 
 | Set `n = 28` bytes | Reduce signature size | Lowers single-object hash security margin |
 | Add `sphincs-sm3-224f` | Maximize implemented size reduction | `d*n` below 256f baseline proxy |
 | Add `sphincs-sm3-224f-dn` | Preserve `d*n >= 544` under 64-bit address constraint | Smaller size reduction but more conservative |
-| Keep `h=80,d=20` as candidate | Shows parameter-search direction | Needs address extension because it requires 76 subtree bits |
+| Add `sphincs-sm3-224f-h80` | Evaluate `h=80,d=20` with 76 subtree bits | Uses a distinct project-specific address encoding; not FIPS-compatible |
 
 ## Parameter Comparison
 
@@ -68,7 +68,7 @@ The experiment intentionally preserves the following design properties from the 
 | `sphincs-sha2-256f` baseline | SHA-256 | 32 | 68 | 17 | 4 | 544 | 49856 | Reference comparison |
 | `sphincs-sm3-224f` | SM3 | 28 | 68 | 17 | 4 | 476 | 39816 | Implemented experiment |
 | `sphincs-sm3-224f-dn` | SM3 | 28 | 60 | 20 | 3 | 560 | 44548 | Implemented conservative experiment |
-| `h=80,d=20` candidate | SM3 | 28 | 80 | 20 | 4 | 560 | 45108 | Requires address extension |
+| `sphincs-sm3-224f-h80` | SM3 | 28 | 80 | 20 | 4 | 560 | 45108 | Implemented wide-address prototype |
 
 ## FIPS Compatibility Boundary
 

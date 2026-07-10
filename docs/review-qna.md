@@ -14,25 +14,27 @@ No. SM3 compression, padding, and full 256-bit digest computation are kept uncha
 
 Yes, truncation lowers the upper bound of a single hash object from 256 bits to 224 bits. That is why the repository clearly marks the result as an experimental parameter optimization and includes a conservative `sphincs-sm3-224f-dn` variant.
 
-## 4. Why provide two implemented parameter sets?
+## 4. Why provide three implemented parameter sets?
 
 `sphincs-sm3-224f` keeps the original 256f tree shape and gives the largest implemented size reduction: `20.14%`.
 
 `sphincs-sm3-224f-dn` keeps `d*n = 560`, which is above the 256f baseline proxy `544`, and still reduces size by `10.65%`. It is the more conservative engineering choice.
 
+`sphincs-sm3-224f-h80` keeps `d*n = 560` and restores `h/d = 4`. It is the engineering prototype used to validate 76-bit subtree indexing.
+
 ## 5. What does `d*n` mean in this project?
 
 It is used as a structural proxy combining the number of hypertree layers `d` and the hash-object size `n`. It is not a full security proof, but it is useful for comparing how much hash-object material is distributed across layers.
 
-## 6. Why is `h=80,d=20` not implemented yet?
+## 6. How is `h=80,d=20` implemented despite the 64-bit limit?
 
-The current reference implementation stores subtree indices in 64 bits. For `h=80,d=20`, the required subtree bits are:
+The original reference path stores subtree indices in 64 bits. For `h=80,d=20`, the required subtree bits are:
 
 ```text
 (h / d) * (d - 1) = 4 * 19 = 76
 ```
 
-So this candidate needs an address-format extension before it can be implemented cleanly.
+The `sphincs-sm3-224f-h80` prototype uses a portable high/low 64-bit index and a separate 12-byte tree field. It leaves the original parameter encodings unchanged. This proves functional feasibility, not cryptographic security or standards compatibility.
 
 ## 7. What is the main innovation?
 
@@ -40,7 +42,8 @@ The project combines three pieces:
 
 - SM3 backend integration for SPHINCS+,
 - 224-bit internal object representation to reduce signature size,
-- reproducible parameter search and engineering-constraint checks.
+- reproducible parameter search and engineering-constraint checks,
+- an isolated wide-address prototype that makes the 76-bit candidate executable.
 
 The strongest claim is not “a new standard,” but “a reproducible SPHINCS+-SM3 parameter-optimization experiment.”
 
@@ -70,11 +73,11 @@ No. It should not be deployed as a production signature scheme without a dedicat
 
 Position it as:
 
-> An experimental SPHINCS+-SM3 signature-length optimization that preserves standard SM3 computation, implements two reproducible parameter sets, and exposes the engineering/security trade-offs with automated tests.
+> An experimental SPHINCS+-SM3 signature-length optimization that preserves standard SM3 computation, implements three reproducible parameter sets including a wide-address prototype, and exposes the engineering/security trade-offs with automated tests.
 
 ## 12. What is the next technical milestone?
 
-Implement an extended-address prototype to evaluate `h=80,d=20`, then compare it against the two implemented 224-bit schemes in signature length, runtime, and safety margin.
+Review the extended compressed-address encoding for injectivity and proof compatibility, then compare robust and simple tweakable-hash variants across the three implemented schemes.
 
 ## 13. Is this project FIPS 205 compliant?
 

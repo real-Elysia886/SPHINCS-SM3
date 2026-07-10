@@ -89,7 +89,7 @@ CANDIDATES = [
     BASELINE,
     Params("sphincs-sm3-224f implemented", 28, 68, 17, 9, 35),
     Params("sphincs-sm3-224f-dn implemented", 28, 60, 20, 9, 35),
-    Params("h=80,d=20 candidate", 28, 80, 20, 9, 35),
+    Params("sphincs-sm3-224f-h80 wide-address prototype", 28, 80, 20, 9, 35),
 ]
 
 
@@ -127,7 +127,7 @@ def markdown_table(params: list[Params], address_bits: int = 64) -> str:
         "tree bits",
         "sig bytes",
         "saved vs 256f",
-        f"compatible <= {address_bits} bits",
+        f"original address <= {address_bits} bits",
     ]
     lines = [
         "| " + " | ".join(headers) + " |",
@@ -229,7 +229,7 @@ def write_parameter_report(args: argparse.Namespace) -> Path:
     selected = [
         Params("sphincs-sm3-224f implemented", 28, 68, 17, 9, 35),
         Params("sphincs-sm3-224f-dn implemented", 28, 60, 20, 9, 35),
-        Params("h=80,d=20 candidate", 28, 80, 20, 9, 35),
+        Params("sphincs-sm3-224f-h80 wide-address prototype", 28, 80, 20, 9, 35),
     ]
     shortest = params[: min(args.top, len(params))]
 
@@ -257,13 +257,13 @@ python tools/analyze_params.py --search --pareto --write-doc
 | Maximum subtree-address bits | {args.address_bits} |
 | Maximum per-layer tree height | {args.max_tree_height} |
 
-The current reference implementation stores subtree indices in 64 bits, so a directly implementable parameter set must satisfy:
+The unmodified reference address path stores subtree indices in 64 bits, so a parameter set using the original compressed layout must satisfy:
 
 ```text
 (h / d) * (d - 1) <= 64
 ```
 
-## Implemented and Candidate Sets
+## Implemented Sets and Baseline
 
 {markdown_table([BASELINE, *selected], args.address_bits)}
 
@@ -287,11 +287,12 @@ The Pareto front is computed over three objectives:
 
 - `sphincs-sm3-224f` is the aggressive implemented choice: it keeps the 256f tree shape and gives the largest implemented size reduction, but its `d*n` proxy is below the 256f baseline.
 - `sphincs-sm3-224f-dn` is the conservative implemented choice: it preserves `d*n >= 544`, remains address-compatible, and still reduces signature size by 10.65%.
-- `h=80,d=20` is an attractive theoretical candidate because it keeps `d*n = 560`, but it needs 76 subtree-address bits and therefore requires an address-format extension before implementation.
+- `sphincs-sm3-224f-h80` is the implemented wide-address prototype: it keeps `d*n = 560`, uses 76 subtree-index bits, and serializes them into a separate 12-byte tree field.
+- The wide-address prototype deliberately uses a distinct 26-byte compressed SM3 address layout; it is not wire-compatible with the original 22-byte experimental layout.
 
 ## Next Work
 
-1. Add an extended-address prototype to evaluate `h=80,d=20`.
+1. Add deterministic tests for the wide tree-index conversion helpers.
 2. Add simple/robust tweakable-hash comparisons.
 3. Expand the search objective set with performance measurements once more platforms are tested.
 """
@@ -329,8 +330,8 @@ def main() -> int:
     print_markdown(CANDIDATES, args.address_bits)
     print()
     print(
-        "Constraint: the reference address format stores subtree indices in 64 bits, "
-        "so (h / d) * (d - 1) must be <= 64."
+        "Constraint: the original compressed address format stores subtree indices "
+        "in 64 bits; the isolated wide-address prototype extends this field to 96 bits."
     )
     if args.search:
         print()

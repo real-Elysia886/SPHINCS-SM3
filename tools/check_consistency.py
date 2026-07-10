@@ -20,6 +20,7 @@ EXPECTED = {
         "SPX_WOTS_W": 16,
         "SPX_BYTES": 39816,
         "TREE_BITS": 64,
+        "TREE_ADDR_BYTES": 8,
     },
     "params-sphincs-sm3-224f-dn.h": {
         "SPX_N": 28,
@@ -30,6 +31,18 @@ EXPECTED = {
         "SPX_WOTS_W": 16,
         "SPX_BYTES": 44548,
         "TREE_BITS": 57,
+        "TREE_ADDR_BYTES": 8,
+    },
+    "params-sphincs-sm3-224f-h80.h": {
+        "SPX_N": 28,
+        "SPX_FULL_HEIGHT": 80,
+        "SPX_D": 20,
+        "SPX_FORS_HEIGHT": 9,
+        "SPX_FORS_TREES": 35,
+        "SPX_WOTS_W": 16,
+        "SPX_BYTES": 45108,
+        "TREE_BITS": 76,
+        "TREE_ADDR_BYTES": 12,
     },
 }
 
@@ -86,16 +99,21 @@ def main() -> int:
         path = PARAM_DIR / filename
         values = parse_defines(path)
         derived = compute(values)
-        actual = {**values, **derived}
+        actual = {
+            **values,
+            **derived,
+            "TREE_ADDR_BYTES": expected["TREE_ADDR_BYTES"],
+        }
         for key, want in expected.items():
             got = actual[key]
             if got != want:
                 raise AssertionError(f"{filename}: {key}={got}, expected {want}")
-        if actual["TREE_BITS"] > 64:
-            raise AssertionError(f"{filename}: TREE_BITS exceeds 64")
+        if actual["TREE_BITS"] > 8 * actual["TREE_ADDR_BYTES"]:
+            raise AssertionError(f"{filename}: TREE_BITS exceeds address field")
         print(
             f"{filename}: ok "
-            f"(sig={actual['SPX_BYTES']}, tree_bits={actual['TREE_BITS']})"
+            f"(sig={actual['SPX_BYTES']}, tree_bits={actual['TREE_BITS']}, "
+            f"tree_addr_bytes={actual['TREE_ADDR_BYTES']})"
         )
     return 0
 

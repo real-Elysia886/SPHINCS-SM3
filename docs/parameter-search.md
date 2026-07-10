@@ -22,26 +22,26 @@ python tools/analyze_params.py --search --pareto --write-doc
 | Maximum subtree-address bits | 64 |
 | Maximum per-layer tree height | 32 |
 
-The current reference implementation stores subtree indices in 64 bits, so a directly implementable parameter set must satisfy:
+The unmodified reference address path stores subtree indices in 64 bits, so a parameter set using the original compressed layout must satisfy:
 
 ```text
 (h / d) * (d - 1) <= 64
 ```
 
-## Implemented and Candidate Sets
+## Implemented Sets and Baseline
 
-| scheme | n | h | d | h/d | WOTS len | d*n | tree bits | sig bytes | saved vs 256f | compatible <= 64 bits |
+| scheme | n | h | d | h/d | WOTS len | d*n | tree bits | sig bytes | saved vs 256f | original address <= 64 bits |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | sphincs-sha2-256f baseline | 32 | 68 | 17 | 4 | 67 | 544 | 64 | 49856 | 0 (0.00%) | yes |
 | sphincs-sm3-224f implemented | 28 | 68 | 17 | 4 | 59 | 476 | 64 | 39816 | 10040 (20.14%) | yes |
 | sphincs-sm3-224f-dn implemented | 28 | 60 | 20 | 3 | 59 | 560 | 57 | 44548 | 5308 (10.65%) | yes |
-| h=80,d=20 candidate | 28 | 80 | 20 | 4 | 59 | 560 | 76 | 45108 | 4748 (9.52%) | no |
+| sphincs-sm3-224f-h80 wide-address prototype | 28 | 80 | 20 | 4 | 59 | 560 | 76 | 45108 | 4748 (9.52%) | no |
 
 ## Shortest Compatible Candidates
 
 These are the shortest candidates satisfying the configured `d*n` and address constraints.
 
-| scheme | n | h | d | h/d | WOTS len | d*n | tree bits | sig bytes | saved vs 256f | compatible <= 64 bits |
+| scheme | n | h | d | h/d | WOTS len | d*n | tree bits | sig bytes | saved vs 256f | original address <= 64 bits |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | n=28,h=20,d=20 | 28 | 20 | 20 | 1 | 59 | 560 | 19 | 43428 | 6428 (12.89%) | yes |
 | n=28,h=40,d=20 | 28 | 40 | 20 | 2 | 59 | 560 | 38 | 43988 | 5868 (11.77%) | yes |
@@ -64,7 +64,7 @@ The Pareto front is computed over three objectives:
 - maximize `d*n`,
 - maximize total tree height `h`.
 
-| scheme | n | h | d | h/d | WOTS len | d*n | tree bits | sig bytes | saved vs 256f | compatible <= 64 bits |
+| scheme | n | h | d | h/d | WOTS len | d*n | tree bits | sig bytes | saved vs 256f | original address <= 64 bits |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | n=28,h=20,d=20 | 28 | 20 | 20 | 1 | 59 | 560 | 19 | 43428 | 6428 (12.89%) | yes |
 | n=28,h=40,d=20 | 28 | 40 | 20 | 2 | 59 | 560 | 38 | 43988 | 5868 (11.77%) | yes |
@@ -83,10 +83,11 @@ The Pareto front is computed over three objectives:
 
 - `sphincs-sm3-224f` is the aggressive implemented choice: it keeps the 256f tree shape and gives the largest implemented size reduction, but its `d*n` proxy is below the 256f baseline.
 - `sphincs-sm3-224f-dn` is the conservative implemented choice: it preserves `d*n >= 544`, remains address-compatible, and still reduces signature size by 10.65%.
-- `h=80,d=20` is an attractive theoretical candidate because it keeps `d*n = 560`, but it needs 76 subtree-address bits and therefore requires an address-format extension before implementation.
+- `sphincs-sm3-224f-h80` is the implemented wide-address prototype: it keeps `d*n = 560`, uses 76 subtree-index bits, and serializes them into a separate 12-byte tree field.
+- The wide-address prototype deliberately uses a distinct 26-byte compressed SM3 address layout; it is not wire-compatible with the original 22-byte experimental layout.
 
 ## Next Work
 
-1. Add an extended-address prototype to evaluate `h=80,d=20`.
+1. Add deterministic tests for the wide tree-index conversion helpers.
 2. Add simple/robust tweakable-hash comparisons.
 3. Expand the search objective set with performance measurements once more platforms are tested.

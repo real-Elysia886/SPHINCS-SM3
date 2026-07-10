@@ -3,8 +3,10 @@
 #include <stdlib.h>
 
 #include "../api.h"
+#include "../address.h"
 #include "../params.h"
 #include "../randombytes.h"
+#include "../utils.h"
 
 #ifndef SPX_MLEN
 #define SPX_MLEN 32
@@ -14,6 +16,41 @@
 #define SPX_SIGNATURES 1
 #endif
 
+static int test_wide_tree_index(void)
+{
+    static const unsigned char input[10] = {
+        0x0a, 0xbc, 0xde, 0xf0, 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc
+    };
+    static const unsigned char shifted[12] = {
+        0x00, 0x00, 0x00, 0xab, 0xcd, 0xef,
+        0x01, 0x23, 0x45, 0x67, 0x89, 0xab
+    };
+    static const unsigned char wide_address[12] = {
+        0x00, 0x00, 0x0a, 0xbc, 0xde, 0xf0,
+        0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc
+    };
+    unsigned char encoded[12];
+    uint32_t address[8] = {0};
+    spx_tree_index tree;
+
+    tree_index_from_bytes(&tree, input, sizeof(input), 76);
+    if (tree.high != 0xabc || tree.low != UINT64_C(0xdef0123456789abc)) {
+        return -1;
+    }
+    if (tree_index_low_bits(&tree, 4) != 0x0c) {
+        return -1;
+    }
+    set_tree_addr(address, &tree);
+    if (SPX_TREE_ADDR_BYTES == 12
+            && memcmp((unsigned char *)address + SPX_OFFSET_TREE,
+                      wide_address, sizeof(wide_address)) != 0) {
+        return -1;
+    }
+    tree_index_shift_right(&tree, 4);
+    tree_index_to_bytes(encoded, sizeof(encoded), &tree);
+    return memcmp(encoded, shifted, sizeof(encoded)) == 0 ? 0 : -1;
+}
+
 int main(void)
 {
     int ret = 0;
@@ -21,6 +58,12 @@ int main(void)
 
     /* Make stdout buffer more responsive. */
     setvbuf(stdout, NULL, _IONBF, 0);
+
+    if (test_wide_tree_index() != 0) {
+        printf("Wide tree-index helper test failed!\n");
+        return -1;
+    }
+    printf("Wide tree-index helper test passed.\n");
 
     unsigned char pk[SPX_PK_BYTES];
     unsigned char sk[SPX_SK_BYTES];

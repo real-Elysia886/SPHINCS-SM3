@@ -21,11 +21,13 @@ The comparison baseline is `sphincs-sha2-256f` from the SPHINCS+ reference param
 | `sphincs-sha2-256f` | 32 | 68 | 17 | 4 | 544 | 49856 |
 | `sphincs-sm3-224f` | 28 | 68 | 17 | 4 | 476 | 39816 |
 | `sphincs-sm3-224f-dn` | 28 | 60 | 20 | 3 | 560 | 44548 |
+| `sphincs-sm3-224f-h80` | 28 | 80 | 20 | 4 | 560 | 45108 |
 
-The two implemented SM3 variants serve different purposes:
+The three implemented SM3 variants serve different purposes:
 
 - `sphincs-sm3-224f` maximizes implemented signature-size reduction.
 - `sphincs-sm3-224f-dn` is a conservative engineering variant that keeps the `d*n` structural proxy above the 256f baseline while remaining compatible with the current address representation.
+- `sphincs-sm3-224f-h80` is an isolated wide-address prototype that exercises a 76-bit subtree index without changing the original parameter encodings.
 
 ## Why 224 Bits
 
@@ -45,7 +47,8 @@ This repository treats that discussion as a reference point, not as a proof for 
 | SM3 padding and 256-bit computation | No | Full SM3 is computed before output representation is truncated. |
 | SPHINCS+ object size `n` | Yes | Internal objects use 28 bytes instead of 32 bytes. |
 | WOTS+ length | Yes | For `w = 16`, `WOTS_LEN` falls from 67 to 59. |
-| Signature size | Yes | Implemented reductions are 20.14% and 10.65%. |
+| Signature size | Yes | Implemented reductions range from 9.52% to 20.14%. |
+| Address encoding | Prototype only | `224f-h80` uses a separate 12-byte tree field and 26-byte compressed SM3 address. |
 | Security proof status | Yes | The parameter sets are experimental and not FIPS-approved. |
 
 ## Security Properties to Revisit
@@ -97,15 +100,15 @@ It keeps the `d*n` proxy above the 256f baseline and stays within the 64-bit add
 
 This is the safer variant to emphasize when the review focus is engineering conservatism.
 
-### `h=80,d=20` Candidate
+### `sphincs-sm3-224f-h80` Wide-Address Prototype
 
-The `h=80,d=20` candidate would keep `d*n = 560` and has a computed signature length of 45108 bytes, but it needs:
+This implemented prototype keeps `d*n = 560`, has a signature length of 45108 bytes, and needs:
 
 ```text
 (h / d) * (d - 1) = 4 * 19 = 76
 ```
 
-The current reference address format stores subtree indices in 64 bits, so this candidate requires an address-format extension before implementation.
+The prototype stores the tree index in a portable high/low 64-bit structure and serializes it into a distinct 12-byte tree field. Existing parameter sets continue using the original 8-byte field. Successful sign/verify tests establish functional consistency only; they do not establish cryptographic security of the new address format.
 
 ## Risk Register
 
@@ -113,7 +116,7 @@ The current reference address format stores subtree indices in 64 bits, so this 
 | --- | --- | --- |
 | SM3-specific multi-target analysis is incomplete | Cannot claim standard-level security | Mark the project as experimental and list formal analysis as future work. |
 | Truncation reduces single-object bit length | Lowers generic hash-object security margin | Use 224 bits rather than a more aggressive value; provide conservative `d*n` variant. |
-| Address representation limits parameter search | Blocks some attractive candidates | Check `(h / d) * (d - 1) <= 64` and mark unsupported candidates clearly. |
+| Extended address encoding is project-specific | Interoperability and proof assumptions require review | Isolate it to `224f-h80`, retain old encodings, and test both paths in CI. |
 | Performance results are machine-dependent | Timings may vary across reviewers | Provide reproducible scripts and treat timings as same-machine comparisons. |
 | Functional tests could be mistaken for proof | Overclaiming risk | Separate smoke tests, benchmark data, and cryptographic assumptions. |
 
@@ -136,7 +139,7 @@ The project should not claim:
 
 1. Replace the screening model in [multitarget-security.md](multitarget-security.md) with a proof-aligned SM3-oriented multi-target analysis.
 2. Analyze the robust and simple tweakable-hash variants separately.
-3. Extend the address format and implement the `h=80,d=20` candidate.
+3. Review the 26-byte compressed SM3 address for injectivity and proof compatibility.
 4. Extend the parameter-search report with platform-specific performance objectives.
 5. Ask for third-party review of the security assumptions before any deployment claim.
 

@@ -192,6 +192,7 @@ python tools/benchmark_params.py --iterations {iterations} --message-bytes {mess
 
 - `sphincs-sm3-224f` gives the strongest implemented signature-size reduction.
 - `sphincs-sm3-224f-dn` keeps the `d*n` structural proxy at or above the 256f baseline while still reducing signature size.
+- `sphincs-sm3-224f-h80` validates the 76-bit wide-address path; its deeper tree shape increases signing cost in this reference implementation.
 - The optimization target is signature length. Runtime should be evaluated together with parameter shape, implementation constraints, and the SM3 backend cost.
 """
     path.write_text(text, encoding="utf-8")
@@ -210,6 +211,7 @@ def main() -> int:
             "sphincs-sha2-256f",
             "sphincs-sm3-224f",
             "sphincs-sm3-224f-dn",
+            "sphincs-sm3-224f-h80",
         ],
     )
     parser.add_argument("--no-write-doc", action="store_true")

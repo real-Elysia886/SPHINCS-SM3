@@ -56,7 +56,7 @@ This is not a proof-tight target count. It is a transparent competition-screenin
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | `sphincs-sm3-224f` | 17 | 59 | 35 | 68 | 1106 | 10.11 |
 | `sphincs-sm3-224f-dn` | 20 | 59 | 35 | 60 | 1275 | 10.32 |
-| `h=80,d=20` candidate | 20 | 59 | 35 | 80 | 1295 | 10.34 |
+| `sphincs-sm3-224f-h80` | 20 | 59 | 35 | 80 | 1295 | 10.34 |
 
 ## Work-Factor Table
 
@@ -66,7 +66,7 @@ Using the generic screening formula:
 log2(W_generic) ~= 224 - log2(q) - log2(tau_proxy)
 ```
 
-| Observed signatures `q` | `log2(q)` | `224f` estimate | `224f-dn` estimate | `h=80,d=20` estimate |
+| Observed signatures `q` | `log2(q)` | `224f` estimate | `224f-dn` estimate | `224f-h80` estimate |
 | ---: | ---: | ---: | ---: | ---: |
 | 1 | 0 | 213.89 | 213.68 | 213.66 |
 | 2^20 | 20 | 193.89 | 193.68 | 193.66 |

@@ -14,6 +14,8 @@
 #define SPX_OFFSET_TREE_HGT  17
 #define SPX_OFFSET_TREE_INDEX 18
 
+#define SPX_TREE_ADDR_BYTES 8
+
 #define SPX_SM3 1
 
 #endif

@@ -51,6 +51,10 @@ jobs:
           make test/sm3_kat PARAMS=sphincs-sm3-224f-dn THASH=robust
           ./test/sm3_kat
 
+          make clean
+          make test/sm3_kat PARAMS=sphincs-sm3-224f-h80 THASH=robust
+          ./test/sm3_kat
+
       - name: Run GNU Make sign/verify tests
         working-directory: ref
         run: |
@@ -61,5 +65,10 @@ jobs:
 
           make clean
           make test/spx PARAMS=sphincs-sm3-224f-dn THASH=robust \
+            EXTRA_CFLAGS="-DSPX_SIGNATURES=2 -DSPX_MLEN=64 -DSPX_TEST_INVALIDSIG"
+          ./test/spx
+
+          make clean
+          make test/spx PARAMS=sphincs-sm3-224f-h80 THASH=robust \
             EXTRA_CFLAGS="-DSPX_SIGNATURES=2 -DSPX_MLEN=64 -DSPX_TEST_INVALIDSIG"
           ./test/spx

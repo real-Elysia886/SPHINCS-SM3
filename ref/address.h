@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include "params.h"
+#include "utils.h"
 
 /* The hash types that are passed to set_type */
 #define SPX_ADDR_TYPE_WOTS 0
@@ -17,7 +18,7 @@
 void set_layer_addr(uint32_t addr[8], uint32_t layer);
 
 #define set_tree_addr SPX_NAMESPACE(set_tree_addr)
-void set_tree_addr(uint32_t addr[8], uint64_t tree);
+void set_tree_addr(uint32_t addr[8], const spx_tree_index *tree);
 
 #define set_type SPX_NAMESPACE(set_type)
 void set_type(uint32_t addr[8], uint32_t type);

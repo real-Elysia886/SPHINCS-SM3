@@ -2,6 +2,12 @@
 
 This directory stores real command outputs captured from the repository. These files are intended to support screenshots, slides, and live-demo fallback during competition review.
 
+Refresh the local evidence files with:
+
+```bash
+python tools/capture_evidence.py
+```
+
 ## Files
 
 | File | Purpose |
@@ -17,9 +23,9 @@ This directory stores real command outputs captured from the repository. These f
 Use real screenshots from these outputs rather than generated terminal images:
 
 1. CI status: show the latest `completed success` CI run.
-2. Parameter consistency: show both implemented parameter headers passing.
+2. Parameter consistency: show all three implemented parameter headers passing, including 76 tree bits and a 12-byte tree field.
 3. Smoke test: show `verification succeeded` and `flipping a bit of m invalidates signature`.
-4. Parameter search: show `sphincs-sm3-224f-dn` and the `h=80,d=20` address-limit explanation.
+4. Parameter search: show the original 64-bit boundary and the isolated `sphincs-sm3-224f-h80` wide-address prototype.
 5. Performance check: show the comparison table for signature size and timing trend.
 
 ## Notes

@@ -5,6 +5,11 @@
 #include "params.h"
 #include "context.h"
 
+typedef struct {
+    uint64_t high;
+    uint64_t low;
+} spx_tree_index;
+
 
 /* To support MSVC use alloca() instead of VLAs. See #20. */
 #ifdef _MSC_VER
@@ -31,6 +36,17 @@ void u32_to_bytes(unsigned char *out, uint32_t in);
  */
 #define bytes_to_ull SPX_NAMESPACE(bytes_to_ull)
 unsigned long long bytes_to_ull(const unsigned char *in, unsigned int inlen);
+
+#define tree_index_from_bytes SPX_NAMESPACE(tree_index_from_bytes)
+void tree_index_from_bytes(spx_tree_index *tree, const unsigned char *in,
+                           unsigned int inlen, unsigned int bits);
+#define tree_index_to_bytes SPX_NAMESPACE(tree_index_to_bytes)
+void tree_index_to_bytes(unsigned char *out, unsigned int outlen,
+                         const spx_tree_index *tree);
+#define tree_index_low_bits SPX_NAMESPACE(tree_index_low_bits)
+uint32_t tree_index_low_bits(const spx_tree_index *tree, unsigned int bits);
+#define tree_index_shift_right SPX_NAMESPACE(tree_index_shift_right)
+void tree_index_shift_right(spx_tree_index *tree, unsigned int bits);
 
 /**
  * Computes a root node given a leaf and an auth path.

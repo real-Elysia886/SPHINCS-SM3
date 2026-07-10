@@ -57,7 +57,11 @@ def main() -> int:
     if args.cc:
         make_prefix.append(f"CC={args.cc}")
 
-    params = ["sphincs-sm3-224f", "sphincs-sm3-224f-dn"]
+    params = [
+        "sphincs-sm3-224f",
+        "sphincs-sm3-224f-dn",
+        "sphincs-sm3-224f-h80",
+    ]
     ret = 0
 
     for param in params:

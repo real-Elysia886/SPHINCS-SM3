@@ -104,7 +104,7 @@ int crypto_sign_signature(uint8_t *sig, size_t *siglen,
     unsigned char mhash[SPX_FORS_MSG_BYTES];
     unsigned char root[SPX_N];
     uint32_t i;
-    uint64_t tree;
+    spx_tree_index tree;
     uint32_t idx_leaf;
     uint32_t wots_addr[8] = {0};
     uint32_t tree_addr[8] = {0};
@@ -130,7 +130,7 @@ int crypto_sign_signature(uint8_t *sig, size_t *siglen,
     hash_message(mhash, &tree, &idx_leaf, sig, pk, m, mlen, &ctx);
     sig += SPX_N;
 
-    set_tree_addr(wots_addr, tree);
+    set_tree_addr(wots_addr, &tree);
     set_keypair_addr(wots_addr, idx_leaf);
 
     /* Sign the message hash using FORS. */
@@ -139,7 +139,7 @@ int crypto_sign_signature(uint8_t *sig, size_t *siglen,
 
     for (i = 0; i < SPX_D; i++) {
         set_layer_addr(tree_addr, i);
-        set_tree_addr(tree_addr, tree);
+        set_tree_addr(tree_addr, &tree);
 
         copy_subtree_addr(wots_addr, tree_addr);
         set_keypair_addr(wots_addr, idx_leaf);
@@ -148,8 +148,8 @@ int crypto_sign_signature(uint8_t *sig, size_t *siglen,
         sig += SPX_WOTS_BYTES + SPX_TREE_HEIGHT * SPX_N;
 
         /* Update the indices for the next layer. */
-        idx_leaf = (tree & ((1 << SPX_TREE_HEIGHT)-1));
-        tree = tree >> SPX_TREE_HEIGHT;
+        idx_leaf = tree_index_low_bits(&tree, SPX_TREE_HEIGHT);
+        tree_index_shift_right(&tree, SPX_TREE_HEIGHT);
     }
 
     *siglen = SPX_BYTES;
@@ -170,7 +170,7 @@ int crypto_sign_verify(const uint8_t *sig, size_t siglen,
     unsigned char root[SPX_N];
     unsigned char leaf[SPX_N];
     unsigned int i;
-    uint64_t tree;
+    spx_tree_index tree;
     uint32_t idx_leaf;
     uint32_t wots_addr[8] = {0};
     uint32_t tree_addr[8] = {0};
@@ -196,7 +196,7 @@ int crypto_sign_verify(const uint8_t *sig, size_t siglen,
     sig += SPX_N;
 
     /* Layer correctly defaults to 0, so no need to set_layer_addr */
-    set_tree_addr(wots_addr, tree);
+    set_tree_addr(wots_addr, &tree);
     set_keypair_addr(wots_addr, idx_leaf);
 
     fors_pk_from_sig(root, sig, mhash, &ctx, wots_addr);
@@ -205,7 +205,7 @@ int crypto_sign_verify(const uint8_t *sig, size_t siglen,
     /* For each subtree.. */
     for (i = 0; i < SPX_D; i++) {
         set_layer_addr(tree_addr, i);
-        set_tree_addr(tree_addr, tree);
+        set_tree_addr(tree_addr, &tree);
 
         copy_subtree_addr(wots_addr, tree_addr);
         set_keypair_addr(wots_addr, idx_leaf);
@@ -227,8 +227,8 @@ int crypto_sign_verify(const uint8_t *sig, size_t siglen,
         sig += SPX_TREE_HEIGHT * SPX_N;
 
         /* Update the indices for the next layer. */
-        idx_leaf = (tree & ((1 << SPX_TREE_HEIGHT)-1));
-        tree = tree >> SPX_TREE_HEIGHT;
+        idx_leaf = tree_index_low_bits(&tree, SPX_TREE_HEIGHT);
+        tree_index_shift_right(&tree, SPX_TREE_HEIGHT);
     }
 
     /* Check if the root node equals the root node in the public key. */
